@@ -5,12 +5,12 @@ using Xunit;
 
 namespace Antix.Serializing.Tests
 {
-    public class date_handling
+    public class serialize_dates
     {
         [Fact]
         public void standard()
         {
-            var sut = POXSerializer
+            var sut = new SerializerBuilder()
                 .Create();
 
             var result = sut.Serialize(new HasDate());
@@ -21,7 +21,7 @@ namespace Antix.Serializing.Tests
         [Fact]
         public void overriding()
         {
-            var sut = POXSerializer
+            var sut = new SerializerBuilder()
                 .Format<DateTimeOffset>("d MMM yyyy")
                 .Create();
 
@@ -36,16 +36,31 @@ namespace Antix.Serializing.Tests
         [Fact]
         public void overriding_with_formatter()
         {
-            var sut = POXSerializer
+            var sut = new SerializerBuilder()
                 .Format<DateTimeOffset>(CultureInfo.GetCultureInfo("en-GB"))
                 .Create();
 
             var result = sut.Serialize(new HasDate
-                                           {
-                                               Date = new DateTime(2000, 12, 13)
-                                           });
+            {
+                Date = new DateTime(2000, 12, 13)
+            });
 
             Assert.Equal("<HasDate><Date>13/12/2000 00:00:00 +00:00</Date></HasDate>", result);
+        }
+
+        [Fact]
+        public void overriding_with_check_and_formatter()
+        {
+            var sut = new SerializerBuilder()
+                .Format((v, t, n) => true, v => "Hello")
+                .Create();
+
+            var result = sut.Serialize(new HasDate
+            {
+                Date = new DateTime(2000, 12, 13)
+            });
+
+            Assert.Equal("<HasDate>Hello</HasDate>", result);
         }
     }
 }

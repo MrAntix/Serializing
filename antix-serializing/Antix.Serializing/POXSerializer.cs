@@ -8,102 +8,104 @@ using System.Text;
 
 namespace Antix.Serializing
 {
-    public class POXSerializer
+    public class POXSerializer:
+        ISerializer
     {
-        readonly IReadOnlyDictionary<Func<PropertyInfo, bool>, Func<object, string>> _formatters;
+        readonly IReadOnlyDictionary<Func<object, Type, string, bool>, Func<object, string>> _formatters;
 
         internal POXSerializer(
-            IReadOnlyDictionary<Func<PropertyInfo, bool>, Func<object, string>> formatters,
-            IPOXSerializerSettings settings)
+            IReadOnlyDictionary<Func<object, Type, string, bool>, Func<object, string>> formatters,
+            ISerializerSettings settings)
         {
             _formatters = formatters;
             _encoding = settings.Encoding;
+            _includeNulls = settings.IncludeNulls;
         }
 
         readonly Encoding _encoding;
+        readonly bool _includeNulls;
 
         public Encoding Encoding
         {
             get { return _encoding; }
         }
 
-        public string Serialize(object value)
+        public bool IncludeNulls
         {
-            using (var stream = new MemoryStream())
-            using (var writer = new StreamWriter(stream, _encoding))
-            {
-                Serialize(writer, value);
-
-                writer.Flush();
-                stream.Seek(0, 0);
-
-                return _encoding.GetString(stream.ToArray());
-            }
+            get { return _includeNulls; }
         }
 
-        public void Serialize(TextWriter stream, object value)
+        public void Serialize(TextWriter writer, object value)
         {
             if (value == null) return;
 
-            Serialize(stream, value, value.GetType().Name);
-        }
-
-        public void Serialize(TextWriter stream, object value, string name)
-        {
-            stream.Write("<{0}>", name);
-
             var type = value.GetType();
-            Write(stream, type, value);
 
-            stream.Write("</{0}>", name);
+            WriteValue(writer, value, type, type.Name);
         }
 
-        void Write(TextWriter stream, Type type, object value)
+        void Write(TextWriter writer, object value, Type type)
         {
             switch (Type.GetTypeCode(type))
             {
                 case TypeCode.Object:
                     if (IsEnumerable(type))
                     {
-                        WriteObjects(stream, value as IEnumerable);
+                        WriteObjects(writer, value as IEnumerable);
                     }
                     else
                     {
-                        WriteObject(stream, value, type);
+                        WriteObject(writer, value, type);
                     }
                     break;
                 default:
-                    stream.Write(value);
+                    writer.Write(value);
                     break;
             }
         }
 
-        void WriteObject(TextWriter stream, object value, Type type)
+        void WriteObject(TextWriter writer, object value, IReflect type)
         {
             foreach (var property in type
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public))
             {
                 var propertyValue = property.GetValue(value, new object[] {});
-                var formatter = (from f in _formatters
-                                 where f.Key(property)
-                                 select f.Value).LastOrDefault();
-                if (formatter != null)
-                {
-                    propertyValue = formatter(propertyValue);
-                }
+                var propertyType = propertyValue == null
+                                       ? property.PropertyType
+                                       : propertyValue.GetType();
 
-                Serialize(
-                    stream,
-                    propertyValue,
-                    property.Name);
+                WriteValue(writer, propertyValue, propertyType, property.Name);
             }
         }
 
-        void WriteObjects(TextWriter stream, IEnumerable values)
+        void WriteValue(TextWriter writer, object value, Type type, string name)
+        {
+            var formatter = (from f in _formatters
+                             where f.Key(value, type, name)
+                             select f.Value).LastOrDefault();
+            if (formatter != null)
+            {
+                value = formatter(value);
+            }
+
+            if (value == null)
+            {
+                if(_includeNulls)
+                    writer.Write("<{0} nill=\"true\"/>", name);
+            }
+            else
+            {
+                writer.Write("<{0}>", name);
+                Write(writer, value, value.GetType());
+                writer.Write("</{0}>", name);
+            }
+        }
+
+        void WriteObjects(TextWriter writer, IEnumerable values)
         {
             foreach (var value in values)
             {
-                Serialize(stream, value);
+                Serialize(writer, value);
             }
         }
 
@@ -114,29 +116,6 @@ namespace Antix.Serializing
                 || type.GetInterfaces()
                        .Any(i => i.IsGenericType
                                  && i.GetGenericTypeDefinition() == typeof (IEnumerable<>));
-        }
-
-        public static SerializerBuilder Format<T>(string format)
-        {
-            return new SerializerBuilder()
-                .Format<T>(format);
-        }
-
-        public static SerializerBuilder Format<T>(IFormatProvider format)
-        {
-            return new SerializerBuilder()
-                .Format<T>(format);
-        }
-
-        public static POXSerializer Create()
-        {
-            return Create(new SerializerSettings());
-        }
-
-        public static POXSerializer Create(IPOXSerializerSettings settings)
-        {
-            return new SerializerBuilder()
-                .Create(settings);
         }
     }
 }

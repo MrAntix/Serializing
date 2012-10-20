@@ -38,8 +38,12 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SerializerExtensions.cs" />
+    <Compile Include="ISerializer.cs" />
+    <Compile Include="ISerializerBuilder.cs" />
+    <Compile Include="SerializerBuilderExtensions.cs" />
     <Compile Include="SerializerSettings.cs" />
-    <Compile Include="IPOXSerializerSettings.cs" />
+    <Compile Include="ISerializerSettings.cs" />
     <Compile Include="POXSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SerializerBuilder.cs" />

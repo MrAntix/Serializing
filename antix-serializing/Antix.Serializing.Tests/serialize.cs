@@ -4,12 +4,12 @@ using Xunit;
 
 namespace Antix.Serializing.Tests
 {
-    public class simple_classes
+    public class serialize
     {
         [Fact]
-        public void serializes()
+        public void simple()
         {
-            var sut = POXSerializer.Create();
+            var sut = new SerializerBuilder().Create();
 
             var result = sut.Serialize(new Simple
                                            {
@@ -22,9 +22,9 @@ namespace Antix.Serializing.Tests
         }
 
         [Fact]
-        public void serializes_nested()
+        public void nested()
         {
-            var sut = POXSerializer.Create();
+            var sut = new SerializerBuilder().Create();
 
             var result = sut.Serialize(new SimpleNested
                                            {
@@ -42,9 +42,9 @@ namespace Antix.Serializing.Tests
         }
 
         [Fact]
-        public void serializes_nested_enumerables()
+        public void nested_enumerables()
         {
-            var sut = POXSerializer.Create();
+            var sut = new SerializerBuilder().Create();
 
             var result = sut.Serialize(new SimpleNestedEnumerable
                                            {
