@@ -11,7 +11,9 @@ namespace Antix.Serializing
     public class POXSerializer :
         ISerializer
     {
-        readonly IReadOnlyDictionary<Func<object, Type, string, bool>, Func<object, string>> _formatters;
+        readonly IReadOnlyDictionary<
+            Func<object, Type, string, bool>, 
+            Func<object, string>> _formatters;
 
         internal POXSerializer(
             IReadOnlyDictionary<Func<object, Type, string, bool>, Func<object, string>> formatters,
@@ -77,7 +79,7 @@ namespace Antix.Serializing
 
             var type = GetNonNullableType(value.GetType());
 
-            Serialize(writer, value, type, type.Name);
+            Serialize(writer, value, type, Head(type.Name, "`"));
         }
 
         void Serialize(TextWriter writer, object value, Type type)
@@ -225,6 +227,14 @@ namespace Antix.Serializing
                 default:
                     return false;
             }
+        }
+
+        static string Head(string value, string cut)
+        {
+            if (string.IsNullOrEmpty(value)) return value;
+
+            var index = value.IndexOf(cut, StringComparison.Ordinal);
+            return index == -1 ? value : value.Substring(0, index);
         }
     }
 }
