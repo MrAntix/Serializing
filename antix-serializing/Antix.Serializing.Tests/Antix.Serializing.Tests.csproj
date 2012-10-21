@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="Models\HasEnum.cs" />
     <Compile Include="Models\HasNumber.cs" />
+    <Compile Include="Models\HasTimeSpan.cs" />
     <Compile Include="serialize_dates.cs" />
     <Compile Include="Models\HasDate.cs" />
     <Compile Include="serialize_enums.cs" />
@@ -54,6 +55,7 @@
     <Compile Include="Models\SimpleNested.cs" />
     <Compile Include="Models\SimpleNestedEnumerable.cs" />
     <Compile Include="serialize_numbers.cs" />
+    <Compile Include="serialize_timespans.cs" />
     <Compile Include="serialize_with_culture.cs" />
     <Compile Include="XUnitExtensions\UseCultureAttribute.cs" />
   </ItemGroup>
