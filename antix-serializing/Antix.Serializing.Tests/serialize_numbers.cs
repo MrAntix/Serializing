@@ -9,10 +9,15 @@ namespace Antix.Serializing.Tests
 {
     public class serialize_numbers
     {
+        static ISerializerBuilder GetBuilder()
+        {
+            return new SerializerBuilder();
+        }
+
         [Fact]
         public void standard()
         {
-            var sut = new SerializerBuilder()
+            var sut = GetBuilder()
                 .Create();
 
             var result = sut.Serialize(new HasNumber());
@@ -26,7 +31,7 @@ namespace Antix.Serializing.Tests
         [Fact]
         public void nullable_null()
         {
-            var sut = new SerializerBuilder()
+            var sut = GetBuilder()
                 .Create();
 
             var result = sut.Serialize(new HasNumber
@@ -43,7 +48,7 @@ namespace Antix.Serializing.Tests
         [Fact]
         public void nullable_not_null()
         {
-            var sut = new SerializerBuilder()
+            var sut = GetBuilder()
                 .Create();
 
             var result = sut.Serialize(new HasNumber
@@ -60,7 +65,7 @@ namespace Antix.Serializing.Tests
         [Fact]
         public void override_formatting()
         {
-            var sut = new SerializerBuilder()
+            var sut = GetBuilder()
                 .EnumAsNumber()
                 .Create();
 
@@ -77,7 +82,7 @@ namespace Antix.Serializing.Tests
         [Fact]
         public void override_formatting_by_type()
         {
-            var sut = new SerializerBuilder()
+            var sut = GetBuilder()
                 .Format<decimal>(v => "Bob")
                 .Create();
 
@@ -96,7 +101,7 @@ namespace Antix.Serializing.Tests
         [Fact]
         public void override_formatting_custom()
         {
-            var sut = new SerializerBuilder()
+            var sut = GetBuilder()
                 .Format((v, t, n) => n == "NullableValue", v => "Bob")
                 .Create();
 

@@ -13,7 +13,6 @@ namespace Antix.Serializing
     {
         readonly IReadOnlyDictionary<Func<object, Type, string, bool>, Func<object, string>> _formatters;
 
-
         internal POXSerializer(
             IReadOnlyDictionary<Func<object, Type, string, bool>, Func<object, string>> formatters,
             ISerializerSettings settings)
@@ -78,10 +77,10 @@ namespace Antix.Serializing
 
             var type = GetNonNullableType(value.GetType());
 
-            Write(writer, value, type, type.Name);
+            Serialize(writer, value, type, type.Name);
         }
 
-        void Write(TextWriter writer, object value, Type type)
+        void Serialize(TextWriter writer, object value, Type type)
         {
             if (type == typeof (DateTime)
                 || type == typeof (DateTimeOffset))
@@ -115,11 +114,11 @@ namespace Antix.Serializing
                 case TypeCode.Object:
                     if (IsEnumerable(type))
                     {
-                        Write(writer, value as IEnumerable);
+                        Serialize(writer, value as IEnumerable);
                     }
                     else
                     {
-                        Write(writer, value, (IReflect) type);
+                        Serialize(writer, value, (IReflect) type);
                     }
                     break;
                 default:
@@ -128,22 +127,7 @@ namespace Antix.Serializing
             }
         }
 
-        static void Write(TextWriter writer, object value, string format)
-        {
-            if (string.IsNullOrWhiteSpace(format))
-            {
-                writer.Write(value);
-            }
-            else
-            {
-                writer.Write(
-                    string.Concat("{0:", format, "}"),
-                    value
-                    );
-            }
-        }
-
-        void Write(TextWriter writer, object value, Type type, string name)
+        void Serialize(TextWriter writer, object value, Type type, string name)
         {
             var formatter = (from f in _formatters
                              where f.Key(value, type, name)
@@ -161,12 +145,12 @@ namespace Antix.Serializing
             else
             {
                 writer.Write("<{0}>", name);
-                Write(writer, value, GetNonNullableType(value.GetType()));
+                Serialize(writer, value, GetNonNullableType(value.GetType()));
                 writer.Write("</{0}>", name);
             }
         }
 
-        void Write(TextWriter writer, IEnumerable values)
+        void Serialize(TextWriter writer, IEnumerable values)
         {
             foreach (var value in values)
             {
@@ -174,7 +158,7 @@ namespace Antix.Serializing
             }
         }
 
-        void Write(TextWriter writer, object value, IReflect type)
+        void Serialize(TextWriter writer, object value, IReflect type)
         {
             foreach (var property in type
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public))
@@ -185,7 +169,22 @@ namespace Antix.Serializing
                         ? property.PropertyType
                         : propertyValue.GetType();
 
-                Write(writer, propertyValue, propertyType, property.Name);
+                Serialize(writer, propertyValue, propertyType, property.Name);
+            }
+        }
+
+        static void Write(TextWriter writer, object value, string format)
+        {
+            if (string.IsNullOrWhiteSpace(format))
+            {
+                writer.Write(value);
+            }
+            else
+            {
+                writer.Write(
+                    string.Concat("{0:", format, "}"),
+                    value
+                    );
             }
         }
 

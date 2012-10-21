@@ -14,18 +14,11 @@ namespace Antix.Serializing
         public SerializerBuilder()
         {
             _formatters
-                = new Dictionary<Func<object, Type, string, bool>, Func<object, string>>
-                      {
-                          //{
-                          //    (v, t, n) => t == typeof (DateTimeOffset)
-                          //                 || t == typeof (DateTime),
-                          //    v => string.Format("{0:s}", v)
-                          //}
-                      };
+                = new Dictionary<Func<object, Type, string, bool>, Func<object, string>>();
             _settings = new SerializerSettings();
         }
 
-        public SerializerBuilder Format(
+        public ISerializerBuilder Format(
             Func<object, Type, string, bool> canFormat,
             Func<object, string> format)
         {
@@ -62,6 +55,34 @@ namespace Antix.Serializing
             return this;
         }
 
+        public ISerializerBuilder DateTimeFormatString(string value)
+        {
+            _settings.DateTimeFormatString = value;
+
+            return this;
+        }
+
+        public ISerializerBuilder TimeSpanFormatString(string value)
+        {
+            _settings.TimeSpanFormatString = value;
+
+            return this;
+        }
+
+        public ISerializerBuilder EnumFormatString(string value)
+        {
+            _settings.EnumFormatString = value;
+
+            return this;
+        }
+
+        public ISerializerBuilder NumberFormatString(string value)
+        {
+            _settings.NumberFormatString = value;
+
+            return this;
+        }
+
         public ISerializerBuilder IncludeNulls()
         {
             _settings.IncludeNulls = true;
@@ -83,12 +104,14 @@ namespace Antix.Serializing
         public ISerializerBuilder UseCulture(string cultureName)
         {
             _settings.FormatProvider = CultureInfo.GetCultureInfo(cultureName);
+            _settings.DateTimeFormatString = "g";
             return this;
         }
 
         public ISerializerBuilder IgnoreCulture()
         {
             _settings.FormatProvider = CultureInfo.InvariantCulture;
+            _settings.DateTimeFormatString = "s";
             return this;
         }
     }

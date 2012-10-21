@@ -4,6 +4,7 @@ namespace Antix.Serializing.Tests.Models
 {
     public class HasDate
     {
-        public DateTimeOffset Date { get; set; }
+        public DateTimeOffset Value { get; set; }
+        public DateTimeOffset? NullableValue { get; set; }
     }
 }

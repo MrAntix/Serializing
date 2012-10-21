@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Xml.Linq;
+using System.Xml.XPath;
 using Antix.Serializing.Tests.Models;
 using Xunit;
 
@@ -8,10 +9,15 @@ namespace Antix.Serializing.Tests
 {
     public class serialize_nulls
     {
+        static ISerializerBuilder GetBuilder()
+        {
+            return new SerializerBuilder();
+        }
+
         [Fact]
         public void include_nulls()
         {
-            var sut = new SerializerBuilder()
+            var sut = GetBuilder()
                 .IncludeNulls()
                 .Create();
 
@@ -25,7 +31,7 @@ namespace Antix.Serializing.Tests
             Assert.Equal("<Simple><Name nill=\"true\"/></Simple>", result);
 
             var xml = XDocument.Parse(result);
-            var att = xml.Root.Elements().Single().Attributes().Single();
+            var att = xml.XPathSelectElement("/Simple/Name").Attributes().Single();
             Assert.Equal("nill", att.Name);
             Assert.Equal("true", att.Value);
         }
@@ -33,7 +39,7 @@ namespace Antix.Serializing.Tests
         [Fact]
         public void do_not_include_nulls()
         {
-            var sut = new SerializerBuilder()
+            var sut = GetBuilder()
                 .ExcludeNulls()
                 .Create();
 

@@ -12,7 +12,7 @@ namespace Antix.Serializing
         {
             if (value == null) return string.Empty;
 
-            using (var stream = new MemoryStream())
+            var stream = new MemoryStream();
             using (var writer = new FormattingWriter(
                 stream,
                 serializer.Encoding,

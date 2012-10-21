@@ -9,11 +9,16 @@ namespace Antix.Serializing.Tests
 {
     public class serialize_with_culture
     {
+        static ISerializerBuilder GetBuilder()
+        {
+            return new SerializerBuilder();
+        }
+
         [Fact]
         [UseCulture("fr-FR")]
         public void by_default_current_thread_culture_has_no_effect()
         {
-            var sut = new SerializerBuilder()
+            var sut = GetBuilder()
                 .Create();
 
             var result = sut.Serialize(new HasNumber
@@ -31,7 +36,7 @@ namespace Antix.Serializing.Tests
         [UseCulture("fr-FR")]
         public void use_thread_culture()
         {
-            var sut = new SerializerBuilder()
+            var sut = GetBuilder()
                 .UseThreadCulture()
                 .Create();
 
@@ -49,7 +54,7 @@ namespace Antix.Serializing.Tests
         [Fact]
         public void use_specified_culture()
         {
-            var sut = new SerializerBuilder()
+            var sut = GetBuilder()
                 .UseCulture("fr-FR")
                 .Create();
 

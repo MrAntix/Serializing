@@ -6,10 +6,15 @@ namespace Antix.Serializing.Tests
 {
     public class serialize
     {
+        static ISerializerBuilder GetBuilder()
+        {
+            return new SerializerBuilder();
+        }
+
         [Fact]
         public void simple()
         {
-            var sut = new SerializerBuilder().Create();
+            var sut = GetBuilder().Create();
 
             var result = sut.Serialize(new Simple
                                            {
@@ -24,7 +29,7 @@ namespace Antix.Serializing.Tests
         [Fact]
         public void nested()
         {
-            var sut = new SerializerBuilder().Create();
+            var sut = GetBuilder().Create();
 
             var result = sut.Serialize(new SimpleNested
                                            {
@@ -44,7 +49,7 @@ namespace Antix.Serializing.Tests
         [Fact]
         public void nested_enumerables()
         {
-            var sut = new SerializerBuilder().Create();
+            var sut = GetBuilder().Create();
 
             var result = sut.Serialize(new SimpleNestedEnumerable
                                            {
