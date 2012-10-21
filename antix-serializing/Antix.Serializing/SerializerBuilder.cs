@@ -4,10 +4,11 @@ using System.Collections.ObjectModel;
 
 namespace Antix.Serializing
 {
-    public class SerializerBuilder:
+    public class SerializerBuilder :
         ISerializerBuilder
     {
         readonly IDictionary<Func<object, Type, string, bool>, Func<object, string>> _formatters;
+        ISerializerSettings _settings;
 
         public SerializerBuilder()
         {
@@ -20,6 +21,7 @@ namespace Antix.Serializing
                           //    v => string.Format("{0:s}", v)
                           //}
                       };
+            _settings = new SerializerSettings();
         }
 
         public SerializerBuilder Format(
@@ -31,12 +33,44 @@ namespace Antix.Serializing
             return this;
         }
 
-        public POXSerializer Create(
-            ISerializerSettings settings)
+        public POXSerializer Create()
         {
             return new POXSerializer(
                 new ReadOnlyDictionary<Func<object, Type, string, bool>, Func<object, string>>(_formatters),
-                settings);
+                _settings);
+        }
+
+        public ISerializerBuilder Settings(ISerializerSettings settings)
+        {
+            _settings = settings;
+
+            return this;
+        }
+
+        public ISerializerBuilder EnumAsNumber()
+        {
+            _settings.EnumFormatString = "d";
+
+            return this;
+        }
+
+        public ISerializerBuilder EnumAsName()
+        {
+            _settings.EnumFormatString = "g";
+
+            return this;
+        }
+
+        public ISerializerBuilder IncludeNulls()
+        {
+            _settings.IncludeNulls = true;
+            return this;
+        }
+
+        public ISerializerBuilder ExcludeNulls()
+        {
+            _settings.IncludeNulls = false;
+            return this;
         }
     }
 }

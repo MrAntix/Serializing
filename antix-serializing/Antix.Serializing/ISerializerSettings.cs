@@ -12,5 +12,6 @@ namespace Antix.Serializing
         string DateTimeFormatString { get; set; }
         string NumberFormatString { get; set; }
         string TimeSpanFormatString { get; set; }
+        string EnumFormatString { get; set; }
     }
 }

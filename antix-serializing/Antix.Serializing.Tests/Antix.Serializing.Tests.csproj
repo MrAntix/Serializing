@@ -42,8 +42,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\HasEnum.cs" />
+    <Compile Include="Models\HasNumber.cs" />
     <Compile Include="serialize_dates.cs" />
     <Compile Include="Models\HasDate.cs" />
+    <Compile Include="serialize_enums.cs" />
     <Compile Include="serialize_nulls.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="serialize.cs" />

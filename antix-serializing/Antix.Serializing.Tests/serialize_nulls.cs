@@ -12,10 +12,8 @@ namespace Antix.Serializing.Tests
         public void include_nulls()
         {
             var sut = new SerializerBuilder()
-                .Create(new SerializerSettings
-                            {
-                                IncludeNulls = true
-                            });
+                .IncludeNulls()
+                .Create();
 
             var result = sut.Serialize(new Simple
                                            {
@@ -36,10 +34,8 @@ namespace Antix.Serializing.Tests
         public void do_not_include_nulls()
         {
             var sut = new SerializerBuilder()
-                .Create(new SerializerSettings
-                            {
-                                IncludeNulls = false
-                            });
+                .ExcludeNulls()
+                .Create();
 
             var result = sut.Serialize(new Simple
                                            {

@@ -6,9 +6,4 @@ namespace Antix.Serializing.Tests.Models
     {
         public DateTimeOffset Date { get; set; }
     }
-
-    public class HasNumbers
-    {
-        public decimal Decimal { get; set; }
-    }
 }

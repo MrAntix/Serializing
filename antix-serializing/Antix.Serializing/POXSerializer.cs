@@ -24,6 +24,7 @@ namespace Antix.Serializing
             _includeNulls = settings.IncludeNulls;
             _dateTimeFormatString = settings.DateTimeFormatString;
             _timeSpanFormatString = settings.TimeSpanFormatString;
+            _enumFormatString = settings.EnumFormatString;
             _numberFormatString = settings.NumberFormatString;
         }
 
@@ -34,6 +35,7 @@ namespace Antix.Serializing
         readonly string _dateTimeFormatString;
         readonly string _numberFormatString;
         readonly string _timeSpanFormatString;
+        readonly string _enumFormatString;
 
         public Encoding Encoding
         {
@@ -60,6 +62,11 @@ namespace Antix.Serializing
             get { return _timeSpanFormatString; }
         }
 
+        public string EnumFormatString
+        {
+            get { return _enumFormatString; }
+        }
+
         public string NumberFormatString
         {
             get { return _numberFormatString; }
@@ -71,7 +78,7 @@ namespace Antix.Serializing
 
             var type = GetNonNullableType(value.GetType());
 
-            WriteValue(writer, value, type, type.Name);
+            Write(writer, value, type, type.Name);
         }
 
         void Write(TextWriter writer, object value, Type type)
@@ -89,6 +96,12 @@ namespace Antix.Serializing
                 return;
             }
 
+            if (type.IsEnum)
+            {
+                Write(writer, value, _enumFormatString);
+                return;
+            }
+
             var typeCode = Type.GetTypeCode(type);
 
             if (!type.IsArray && IsNumericTypeCode(typeCode))
@@ -102,11 +115,11 @@ namespace Antix.Serializing
                 case TypeCode.Object:
                     if (IsEnumerable(type))
                     {
-                        WriteObjects(writer, value as IEnumerable);
+                        Write(writer, value as IEnumerable);
                     }
                     else
                     {
-                        WriteObject(writer, value, type);
+                        Write(writer, value, (IReflect) type);
                     }
                     break;
                 default:
@@ -130,23 +143,7 @@ namespace Antix.Serializing
             }
         }
 
-        void WriteObject(TextWriter writer, object value, IReflect type)
-        {
-            foreach (var property in type
-                .GetProperties(BindingFlags.Instance | BindingFlags.Public))
-            {
-                var propertyValue = property.GetValue(value, new object[] {});
-                var propertyType = GetNonNullableType(
-                    propertyValue == null
-                        ? property.PropertyType
-                        : propertyValue.GetType()
-                    );
-
-                WriteValue(writer, propertyValue, propertyType, property.Name);
-            }
-        }
-
-        void WriteValue(TextWriter writer, object value, Type type, string name)
+        void Write(TextWriter writer, object value, Type type, string name)
         {
             var formatter = (from f in _formatters
                              where f.Key(value, type, name)
@@ -169,11 +166,26 @@ namespace Antix.Serializing
             }
         }
 
-        void WriteObjects(TextWriter writer, IEnumerable values)
+        void Write(TextWriter writer, IEnumerable values)
         {
             foreach (var value in values)
             {
                 Serialize(writer, value);
+            }
+        }
+
+        void Write(TextWriter writer, object value, IReflect type)
+        {
+            foreach (var property in type
+                .GetProperties(BindingFlags.Instance | BindingFlags.Public))
+            {
+                var propertyValue = property.GetValue(value, new object[] { });
+                var propertyType =
+                    propertyValue == null
+                        ? property.PropertyType
+                        : propertyValue.GetType();
+
+                Write(writer, propertyValue, propertyType, property.Name);
             }
         }
 

@@ -4,12 +4,6 @@ namespace Antix.Serializing
 {
     public static class SerializerBuilderExtensions
     {
-        public static POXSerializer Create(
-            this ISerializerBuilder builder)
-        {
-            return builder.Create(new SerializerSettings());
-        }
-
         public static SerializerBuilder Format<T>(
             this ISerializerBuilder builder,
             string format)

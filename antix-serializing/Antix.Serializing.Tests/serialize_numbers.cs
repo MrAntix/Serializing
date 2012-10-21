@@ -15,7 +15,7 @@ namespace Antix.Serializing.Tests
             var sut = new SerializerBuilder()
                 .Create();
 
-            var result = sut.Serialize(new HasNumbers
+            var result = sut.Serialize(new HasNumber
                                            {
                                                Decimal = 10.5M
                                            });
@@ -23,7 +23,7 @@ namespace Antix.Serializing.Tests
             Console.Write(result);
 
             var xml = XDocument.Parse(result);
-            var value = xml.XPathSelectElement("/HasNumbers/Decimal").Value;
+            var value = xml.XPathSelectElement("/HasNumber/Decimal").Value;
 
             Assert.Equal("10.5", value);
         }
@@ -35,7 +35,7 @@ namespace Antix.Serializing.Tests
             var sut = new SerializerBuilder()
                 .Create();
 
-            var result = sut.Serialize(new HasNumbers
+            var result = sut.Serialize(new HasNumber
                                            {
                                                Decimal = 10.5M
                                            });
@@ -43,7 +43,7 @@ namespace Antix.Serializing.Tests
             Console.Write(result);
 
             var xml = XDocument.Parse(result);
-            var value = xml.XPathSelectElement("/HasNumbers/Decimal").Value;
+            var value = xml.XPathSelectElement("/HasNumber/Decimal").Value;
 
             Assert.Equal("10.5", value);
         }

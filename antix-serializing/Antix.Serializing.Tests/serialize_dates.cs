@@ -27,9 +27,9 @@ namespace Antix.Serializing.Tests
                 .Create();
 
             var result = sut.Serialize(new HasDate
-                                           {
-                                               Date = new DateTime(2000, 12, 13)
-                                           });
+            {
+                Date = new DateTime(2000, 12, 13)
+            });
 
             Assert.Equal("<HasDate><Date>13 Dec 2000</Date></HasDate>", result);
         }
@@ -68,10 +68,11 @@ namespace Antix.Serializing.Tests
         public void use_default_invariant_culture()
         {
             var sut = new SerializerBuilder()
-                .Create(new SerializerSettings
+                .Settings(new SerializerSettings
                 {
                     DateTimeFormatString = null
-                });
+                })
+                .Create();
 
             var result = sut.Serialize(new HasDate());
 
@@ -82,11 +83,12 @@ namespace Antix.Serializing.Tests
         public void use_set_culture()
         {
             var sut = new SerializerBuilder()
-                .Create(new SerializerSettings
+                .Settings(new SerializerSettings
                 {
                     FormatProvider = CultureInfo.GetCultureInfo("fr-FR"),
                     DateTimeFormatString = "D"
-                });
+                })
+                .Create();
 
             var result = sut.Serialize(new HasDate());
 
