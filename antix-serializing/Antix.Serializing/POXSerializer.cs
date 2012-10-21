@@ -8,26 +8,41 @@ using System.Text;
 
 namespace Antix.Serializing
 {
-    public class POXSerializer:
+    public class POXSerializer :
         ISerializer
     {
         readonly IReadOnlyDictionary<Func<object, Type, string, bool>, Func<object, string>> _formatters;
+
 
         internal POXSerializer(
             IReadOnlyDictionary<Func<object, Type, string, bool>, Func<object, string>> formatters,
             ISerializerSettings settings)
         {
             _formatters = formatters;
+            _formatProvider = settings.FormatProvider;
             _encoding = settings.Encoding;
             _includeNulls = settings.IncludeNulls;
+            _dateTimeFormatString = settings.DateTimeFormatString;
+            _timeSpanFormatString = settings.TimeSpanFormatString;
+            _numberFormatString = settings.NumberFormatString;
         }
 
         readonly Encoding _encoding;
+        readonly IFormatProvider _formatProvider;
+
         readonly bool _includeNulls;
+        readonly string _dateTimeFormatString;
+        readonly string _numberFormatString;
+        readonly string _timeSpanFormatString;
 
         public Encoding Encoding
         {
             get { return _encoding; }
+        }
+
+        public IFormatProvider FormatProvider
+        {
+            get { return _formatProvider; }
         }
 
         public bool IncludeNulls
@@ -35,18 +50,54 @@ namespace Antix.Serializing
             get { return _includeNulls; }
         }
 
+        public string DateTimeFormatString
+        {
+            get { return _dateTimeFormatString; }
+        }
+
+        public string TimeSpanFormatString
+        {
+            get { return _timeSpanFormatString; }
+        }
+
+        public string NumberFormatString
+        {
+            get { return _numberFormatString; }
+        }
+
         public void Serialize(TextWriter writer, object value)
         {
             if (value == null) return;
 
-            var type = value.GetType();
+            var type = GetNonNullableType(value.GetType());
 
             WriteValue(writer, value, type, type.Name);
         }
 
         void Write(TextWriter writer, object value, Type type)
         {
-            switch (Type.GetTypeCode(type))
+            if (type == typeof (DateTime)
+                || type == typeof (DateTimeOffset))
+            {
+                Write(writer, value, _dateTimeFormatString);
+                return;
+            }
+
+            if (type == typeof (TimeSpan))
+            {
+                Write(writer, value, _timeSpanFormatString);
+                return;
+            }
+
+            var typeCode = Type.GetTypeCode(type);
+
+            if (!type.IsArray && IsNumericTypeCode(typeCode))
+            {
+                Write(writer, value, _numberFormatString);
+                return;
+            }
+
+            switch (typeCode)
             {
                 case TypeCode.Object:
                     if (IsEnumerable(type))
@@ -64,15 +115,32 @@ namespace Antix.Serializing
             }
         }
 
+        static void Write(TextWriter writer, object value, string format)
+        {
+            if (string.IsNullOrWhiteSpace(format))
+            {
+                writer.Write(value);
+            }
+            else
+            {
+                writer.Write(
+                    string.Concat("{0:", format, "}"),
+                    value
+                    );
+            }
+        }
+
         void WriteObject(TextWriter writer, object value, IReflect type)
         {
             foreach (var property in type
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public))
             {
                 var propertyValue = property.GetValue(value, new object[] {});
-                var propertyType = propertyValue == null
-                                       ? property.PropertyType
-                                       : propertyValue.GetType();
+                var propertyType = GetNonNullableType(
+                    propertyValue == null
+                        ? property.PropertyType
+                        : propertyValue.GetType()
+                    );
 
                 WriteValue(writer, propertyValue, propertyType, property.Name);
             }
@@ -90,13 +158,13 @@ namespace Antix.Serializing
 
             if (value == null)
             {
-                if(_includeNulls)
+                if (_includeNulls)
                     writer.Write("<{0} nill=\"true\"/>", name);
             }
             else
             {
                 writer.Write("<{0}>", name);
-                Write(writer, value, value.GetType());
+                Write(writer, value, GetNonNullableType(value.GetType()));
                 writer.Write("</{0}>", name);
             }
         }
@@ -116,6 +184,36 @@ namespace Antix.Serializing
                 || type.GetInterfaces()
                        .Any(i => i.IsGenericType
                                  && i.GetGenericTypeDefinition() == typeof (IEnumerable<>));
+        }
+
+        static Type GetNonNullableType(Type type)
+        {
+            return type.IsGenericType
+                       ? type.GetGenericTypeDefinition() == typeof (Nullable<>)
+                             ? Nullable.GetUnderlyingType(type)
+                             : type
+                       : type;
+        }
+
+        static bool IsNumericTypeCode(TypeCode typeCode)
+        {
+            switch (typeCode)
+            {
+                case TypeCode.Boolean:
+                case TypeCode.SByte:
+                case TypeCode.Byte:
+                case TypeCode.Int16:
+                case TypeCode.UInt16:
+                case TypeCode.Int32:
+                case TypeCode.Int64:
+                case TypeCode.UInt64:
+                case TypeCode.Single:
+                case TypeCode.Double:
+                case TypeCode.Decimal:
+                    return true;
+                default:
+                    return false;
+            }
         }
     }
 }

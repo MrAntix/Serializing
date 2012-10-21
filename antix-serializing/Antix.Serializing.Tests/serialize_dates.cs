@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using Antix.Serializing.Tests.Models;
+using Antix.Serializing.Tests.XUnitExtensions;
 using Xunit;
 
 namespace Antix.Serializing.Tests
@@ -61,6 +62,47 @@ namespace Antix.Serializing.Tests
             });
 
             Assert.Equal("<HasDate>Hello</HasDate>", result);
+        }
+
+        [Fact]
+        public void use_default_invariant_culture()
+        {
+            var sut = new SerializerBuilder()
+                .Create(new SerializerSettings
+                {
+                    DateTimeFormatString = null
+                });
+
+            var result = sut.Serialize(new HasDate());
+
+            Assert.Equal("<HasDate><Date>01/01/0001 00:00:00 +00:00</Date></HasDate>", result);
+        }
+
+        [Fact]
+        public void use_set_culture()
+        {
+            var sut = new SerializerBuilder()
+                .Create(new SerializerSettings
+                {
+                    FormatProvider = CultureInfo.GetCultureInfo("fr-FR"),
+                    DateTimeFormatString = "D"
+                });
+
+            var result = sut.Serialize(new HasDate());
+
+            Assert.Equal("<HasDate><Date>lundi 1 janvier 0001</Date></HasDate>", result);
+        }
+
+        [Fact]
+        [UseCulture("fr-FR")]
+        public void change_thread_culture()
+        {
+            var sut = new SerializerBuilder()
+                .Create();
+
+            var result = sut.Serialize(new HasDate());
+
+            Assert.Equal("<HasDate><Date>0001-01-01T00:00:00</Date></HasDate>", result);
         }
     }
 }

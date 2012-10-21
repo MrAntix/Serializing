@@ -1,3 +1,5 @@
+using System;
+using System.Globalization;
 using System.Text;
 
 namespace Antix.Serializing
@@ -8,11 +10,30 @@ namespace Antix.Serializing
         public SerializerSettings()
         {
             Encoding = Encoding.Default;
+            FormatProvider = CultureInfo.InvariantCulture;
+
             IncludeNulls = false;
+            DateTimeFormatString = "s";
+            NumberFormatString = "g";
+            TimeSpanFormatString = "c";
         }
 
         public Encoding Encoding { get; set; }
+        public IFormatProvider FormatProvider { get; set; }
 
         public bool IncludeNulls { get; set; }
+        /// <summary>
+        /// <see cref="http://msdn.microsoft.com/en-us/library/az4se3k1.aspx"/>
+        /// </summary>
+        public string DateTimeFormatString { get; set; }
+        /// <summary>
+        /// <see cref="http://msdn.microsoft.com/en-us/library/ee372286.aspx"/>
+        /// </summary>
+        public string TimeSpanFormatString { get; set; }
+        /// <summary>
+        /// <see cref="http://msdn.microsoft.com/en-us/library/dwhawy9k.aspx"/>
+        /// </summary>
+        public string NumberFormatString { get; set; }
+
     }
 }

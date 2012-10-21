@@ -38,6 +38,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IO\FormattingWriter.cs" />
     <Compile Include="SerializerExtensions.cs" />
     <Compile Include="ISerializer.cs" />
     <Compile Include="ISerializerBuilder.cs" />

@@ -14,11 +14,11 @@ namespace Antix.Serializing
             _formatters
                 = new Dictionary<Func<object, Type, string, bool>, Func<object, string>>
                       {
-                          {
-                              (v, t, n) => t == typeof (DateTimeOffset)
-                                           || t == typeof (DateTime),
-                              v => string.Format("{0:s}", v)
-                          }
+                          //{
+                          //    (v, t, n) => t == typeof (DateTimeOffset)
+                          //                 || t == typeof (DateTime),
+                          //    v => string.Format("{0:s}", v)
+                          //}
                       };
         }
 
