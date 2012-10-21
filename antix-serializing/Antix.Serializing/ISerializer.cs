@@ -7,7 +7,7 @@ namespace Antix.Serializing
     public interface ISerializer
     {
         Encoding Encoding { get; }
-        IFormatProvider FormatProvider { get;  }
+        IFormatProvider FormatProvider { get; }
 
         bool IncludeNulls { get; }
 

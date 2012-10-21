@@ -179,7 +179,7 @@ namespace Antix.Serializing
             foreach (var property in type
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public))
             {
-                var propertyValue = property.GetValue(value, new object[] { });
+                var propertyValue = property.GetValue(value, new object[] {});
                 var propertyType =
                     propertyValue == null
                         ? property.PropertyType

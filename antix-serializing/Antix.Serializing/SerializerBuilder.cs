@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 
 namespace Antix.Serializing
 {
@@ -70,6 +71,24 @@ namespace Antix.Serializing
         public ISerializerBuilder ExcludeNulls()
         {
             _settings.IncludeNulls = false;
+            return this;
+        }
+
+        public ISerializerBuilder UseThreadCulture()
+        {
+            _settings.FormatProvider = null;
+            return this;
+        }
+
+        public ISerializerBuilder UseCulture(string cultureName)
+        {
+            _settings.FormatProvider = CultureInfo.GetCultureInfo(cultureName);
+            return this;
+        }
+
+        public ISerializerBuilder IgnoreCulture()
+        {
+            _settings.FormatProvider = CultureInfo.InvariantCulture;
             return this;
         }
     }

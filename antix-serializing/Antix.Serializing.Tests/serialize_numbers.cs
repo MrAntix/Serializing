@@ -1,8 +1,8 @@
 using System;
+using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Antix.Serializing.Tests.Models;
-using Antix.Serializing.Tests.XUnitExtensions;
 using Xunit;
 
 namespace Antix.Serializing.Tests
@@ -15,37 +15,97 @@ namespace Antix.Serializing.Tests
             var sut = new SerializerBuilder()
                 .Create();
 
-            var result = sut.Serialize(new HasNumber
-                                           {
-                                               Decimal = 10.5M
-                                           });
+            var result = sut.Serialize(new HasNumber());
 
             Console.Write(result);
 
             var xml = XDocument.Parse(result);
-            var value = xml.XPathSelectElement("/HasNumber/Decimal").Value;
-
-            Assert.Equal("10.5", value);
+            Assert.Equal("0", xml.XPathSelectElement("/HasNumber/Value").Value);
         }
 
         [Fact]
-        [UseCulture("fr-FR")]
-        public void standard_thread_culture()
+        public void nullable_null()
         {
             var sut = new SerializerBuilder()
                 .Create();
 
             var result = sut.Serialize(new HasNumber
                                            {
-                                               Decimal = 10.5M
+                                               NullableValue = null
                                            });
 
             Console.Write(result);
 
             var xml = XDocument.Parse(result);
-            var value = xml.XPathSelectElement("/HasNumber/Decimal").Value;
+            Assert.False(xml.XPathSelectElements("/HasEnum/NullableValue").Any());
+        }
 
-            Assert.Equal("10.5", value);
+        [Fact]
+        public void nullable_not_null()
+        {
+            var sut = new SerializerBuilder()
+                .Create();
+
+            var result = sut.Serialize(new HasNumber
+                                           {
+                                               NullableValue = 1
+                                           });
+
+            Console.Write(result);
+
+            var xml = XDocument.Parse(result);
+            Assert.Equal("1", xml.XPathSelectElement("/HasNumber/NullableValue").Value);
+        }
+
+        [Fact]
+        public void override_formatting()
+        {
+            var sut = new SerializerBuilder()
+                .EnumAsNumber()
+                .Create();
+
+            var result = sut.Serialize(new HasNumber());
+
+            Console.Write(result);
+
+            var xml = XDocument.Parse(result);
+            var value = xml.XPathSelectElement("/HasNumber/Value").Value;
+
+            Assert.Equal("0", value);
+        }
+
+        [Fact]
+        public void override_formatting_by_type()
+        {
+            var sut = new SerializerBuilder()
+                .Format<decimal>(v => "Bob")
+                .Create();
+
+            var result = sut.Serialize(new HasNumber
+                                           {
+                                               NullableValue = 1
+                                           });
+
+            Console.Write(result);
+
+            var xml = XDocument.Parse(result);
+            Assert.Equal("Bob", xml.XPathSelectElement("/HasNumber/Value").Value);
+            Assert.Equal("Bob", xml.XPathSelectElement("/HasNumber/NullableValue").Value);
+        }
+
+        [Fact]
+        public void override_formatting_custom()
+        {
+            var sut = new SerializerBuilder()
+                .Format((v, t, n) => n == "NullableValue", v => "Bob")
+                .Create();
+
+            var result = sut.Serialize(new HasNumber());
+
+            Console.Write(result);
+
+            var xml = XDocument.Parse(result);
+            Assert.Equal("Bob", xml.XPathSelectElement("/HasNumber/NullableValue").Value);
         }
     }
 }

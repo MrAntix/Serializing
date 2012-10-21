@@ -20,6 +20,7 @@ namespace Antix.Serializing
         }
 
         public Encoding Encoding { get; set; }
+
         public IFormatProvider FormatProvider { get; set; }
 
         public bool IncludeNulls { get; set; }

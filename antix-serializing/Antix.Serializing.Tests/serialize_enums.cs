@@ -24,6 +24,23 @@ namespace Antix.Serializing.Tests
         }
 
         [Fact]
+        public void flags()
+        {
+            var sut = new SerializerBuilder()
+                .Create();
+
+            var result = sut.Serialize(new HasEnum
+                                           {
+                                               FlagsValue = HasEnum.FlaggedTypes.One | HasEnum.FlaggedTypes.Two
+                                           });
+
+            Console.Write(result);
+
+            var xml = XDocument.Parse(result);
+            Assert.Equal("One, Two", xml.XPathSelectElement("/HasEnum/FlagsValue").Value);
+        }
+
+        [Fact]
         public void nullable_null()
         {
             var sut = new SerializerBuilder()

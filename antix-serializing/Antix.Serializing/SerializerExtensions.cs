@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading;
 using Antix.Serializing.IO;
 
 namespace Antix.Serializing
@@ -15,7 +16,7 @@ namespace Antix.Serializing
             using (var writer = new FormattingWriter(
                 stream,
                 serializer.Encoding,
-                serializer.FormatProvider))
+                serializer.FormatProvider ?? Thread.CurrentThread.CurrentCulture))
             {
                 serializer.Serialize(writer, value);
 

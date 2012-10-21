@@ -27,9 +27,9 @@ namespace Antix.Serializing.Tests
                 .Create();
 
             var result = sut.Serialize(new HasDate
-            {
-                Date = new DateTime(2000, 12, 13)
-            });
+                                           {
+                                               Date = new DateTime(2000, 12, 13)
+                                           });
 
             Assert.Equal("<HasDate><Date>13 Dec 2000</Date></HasDate>", result);
         }
@@ -42,9 +42,9 @@ namespace Antix.Serializing.Tests
                 .Create();
 
             var result = sut.Serialize(new HasDate
-            {
-                Date = new DateTime(2000, 12, 13)
-            });
+                                           {
+                                               Date = new DateTime(2000, 12, 13)
+                                           });
 
             Assert.Equal("<HasDate><Date>13/12/2000 00:00:00 +00:00</Date></HasDate>", result);
         }
@@ -57,9 +57,9 @@ namespace Antix.Serializing.Tests
                 .Create();
 
             var result = sut.Serialize(new HasDate
-            {
-                Date = new DateTime(2000, 12, 13)
-            });
+                                           {
+                                               Date = new DateTime(2000, 12, 13)
+                                           });
 
             Assert.Equal("<HasDate>Hello</HasDate>", result);
         }
@@ -69,9 +69,9 @@ namespace Antix.Serializing.Tests
         {
             var sut = new SerializerBuilder()
                 .Settings(new SerializerSettings
-                {
-                    DateTimeFormatString = null
-                })
+                              {
+                                  DateTimeFormatString = null
+                              })
                 .Create();
 
             var result = sut.Serialize(new HasDate());
@@ -84,10 +84,10 @@ namespace Antix.Serializing.Tests
         {
             var sut = new SerializerBuilder()
                 .Settings(new SerializerSettings
-                {
-                    FormatProvider = CultureInfo.GetCultureInfo("fr-FR"),
-                    DateTimeFormatString = "D"
-                })
+                              {
+                                  FormatProvider = CultureInfo.GetCultureInfo("fr-FR"),
+                                  DateTimeFormatString = "D"
+                              })
                 .Create();
 
             var result = sut.Serialize(new HasDate());

@@ -2,6 +2,7 @@ namespace Antix.Serializing.Tests.Models
 {
     public class HasNumber
     {
-        public decimal Decimal { get; set; }
+        public decimal Value { get; set; }
+        public decimal? NullableValue { get; set; }
     }
 }

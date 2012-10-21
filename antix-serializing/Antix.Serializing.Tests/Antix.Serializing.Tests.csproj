@@ -54,6 +54,7 @@
     <Compile Include="Models\SimpleNested.cs" />
     <Compile Include="Models\SimpleNestedEnumerable.cs" />
     <Compile Include="serialize_numbers.cs" />
+    <Compile Include="serialize_with_culture.cs" />
     <Compile Include="XUnitExtensions\UseCultureAttribute.cs" />
   </ItemGroup>
   <ItemGroup>

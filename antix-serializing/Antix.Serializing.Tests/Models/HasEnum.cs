@@ -13,10 +13,11 @@ namespace Antix.Serializing.Tests.Models
             One,
             Two
         }
+
         [Flags]
         public enum FlaggedTypes
         {
-            One,
+            One = 1,
             Two
         }
     }
