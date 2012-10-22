@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using Antix.Serializing.Tests.Models;
 using Xunit;
 
 namespace Antix.Serializing.Tests
 {
-    public class serialize_dictionaries
+    public class serialize_generic_collections
     {
         static ISerializerBuilder GetBuilder()
         {
@@ -13,14 +15,14 @@ namespace Antix.Serializing.Tests
         }
 
         [Fact]
-        public void standard()
+        public void deserialize_dictionary()
         {
             var sut = GetBuilder().Create();
 
             var result = sut.Serialize(
-                new HasDictionary
+                new HasGenericCollections
                     {
-                        Value = new Dictionary<string, Simple>
+                        ValueDictionary = new Dictionary<string, Simple>
                                     {
                                         {
                                             "One", new Simple
@@ -33,30 +35,37 @@ namespace Antix.Serializing.Tests
                 );
 
             Console.Write(result);
+
+            var xml = XDocument.Parse(result);
+            Assert.Equal("One", xml.XPathSelectElement("/HasGenericCollections/ValueDictionary/KeyValuePair/Key").Value);
+            Assert.Equal("Name", xml.XPathSelectElement("/HasGenericCollections/ValueDictionary/KeyValuePair/Value").Value);
         }
 
 
         [Fact]
-        public void deserialize_with_data_contract_serializer()
+        public void deserialize_generic_list()
         {
             var sut = GetBuilder().Create();
 
             var result = sut.Serialize(
-                new HasDictionary
+                new HasGenericCollections
                     {
-                        Value = new Dictionary<string, Simple>
-                                    {
-                                        {
-                                            "One", new Simple
+                        ValueList = new List<Simple>
+                                    (
+                                        new []{
+                                            new Simple
                                                        {
                                                            Name = "Name"
                                                        }
                                         }
-                                    }
+                                    )
                     }
                 );
 
             Console.Write(result);
+
+            var xml = XDocument.Parse(result);
+            Assert.Equal("Name", xml.XPathSelectElement("/HasGenericCollections/ValueList/Simple/Name").Value);
         }
     }
 }
