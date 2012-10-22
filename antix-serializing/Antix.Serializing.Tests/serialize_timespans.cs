@@ -52,9 +52,9 @@ namespace Antix.Serializing.Tests
                 .Create();
 
             var result = sut.Serialize(new HasTimeSpan
-            {
-                Value = TimeSpan.FromHours(1)
-            });
+                                           {
+                                               Value = TimeSpan.FromHours(1)
+                                           });
 
             var xml = XDocument.Parse(result);
             Assert.Equal("01:00:00", xml.XPathSelectElement("/HasTimeSpan/Value").Value);

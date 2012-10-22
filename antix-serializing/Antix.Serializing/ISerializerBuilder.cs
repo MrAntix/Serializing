@@ -10,8 +10,6 @@ namespace Antix.Serializing
             Func<object, Type, string, bool> canFormat,
             Func<object, string> format);
 
-       // ISerializerBuilder Settings(ISerializerSettings serializerSettings);
-
         ISerializerBuilder ExcludeNulls();
         ISerializerBuilder IncludeNulls();
 

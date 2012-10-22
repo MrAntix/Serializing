@@ -9,7 +9,7 @@ namespace Antix.Serializing
         ISerializerBuilder
     {
         readonly IDictionary<Func<object, Type, string, bool>, Func<object, string>> _formatters;
-        ISerializerSettings _settings;
+        readonly ISerializerSettings _settings;
 
         public SerializerBuilder()
         {
@@ -32,13 +32,6 @@ namespace Antix.Serializing
             return new POXSerializer(
                 new ReadOnlyDictionary<Func<object, Type, string, bool>, Func<object, string>>(_formatters),
                 _settings);
-        }
-
-        public ISerializerBuilder Settings(ISerializerSettings settings)
-        {
-            _settings = settings;
-
-            return this;
         }
 
         public ISerializerBuilder EnumAsNumber()

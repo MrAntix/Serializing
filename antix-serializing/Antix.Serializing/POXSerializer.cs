@@ -12,7 +12,7 @@ namespace Antix.Serializing
         ISerializer
     {
         readonly IReadOnlyDictionary<
-            Func<object, Type, string, bool>, 
+            Func<object, Type, string, bool>,
             Func<object, string>> _formatters;
 
         internal POXSerializer(
