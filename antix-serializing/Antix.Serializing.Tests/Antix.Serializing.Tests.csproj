@@ -37,6 +37,9 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="Testing">
+      <HintPath>..\packages\antix-testing.2.0.1\lib\net40\Testing.dll</HintPath>
+    </Reference>
     <Reference Include="xunit, Version=1.9.1.1600, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\xunit.1.9.1\lib\net20\xunit.dll</HintPath>
@@ -47,6 +50,8 @@
     <Compile Include="Models\HasEnum.cs" />
     <Compile Include="Models\HasNumber.cs" />
     <Compile Include="Models\HasTimeSpan.cs" />
+    <Compile Include="serialize_anonymous.cs" />
+    <Compile Include="serialize_benchmark.cs" />
     <Compile Include="serialize_dates.cs" />
     <Compile Include="Models\HasDate.cs" />
     <Compile Include="serialize_generic_collections.cs" />

@@ -12,5 +12,6 @@ namespace Antix.Serializing
         bool IncludeNulls { get; }
 
         void Serialize(TextWriter writer, object value);
+        void Serialize(TextWriter writer, object value, string name);
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Antix.Serializing
@@ -75,11 +76,22 @@ namespace Antix.Serializing
 
         public void Serialize(TextWriter writer, object value)
         {
+            Serialize(writer, value, default(string));
+        }
+
+        public void Serialize(TextWriter writer, object value, string name)
+        {
             if (value == null) return;
 
             var type = GetNonNullableType(value.GetType());
 
-            Serialize(writer, value, type, Head(type.Name, "`"));
+            if(string.IsNullOrWhiteSpace(name)
+                && IsAnonymous(type))
+            {
+                
+            }
+
+            Serialize(writer, value, type, name ?? Head(type.Name, "`"));
         }
 
         void Serialize(TextWriter writer, object value, Type type)
@@ -105,7 +117,7 @@ namespace Antix.Serializing
 
             var typeCode = Type.GetTypeCode(type);
 
-            if (!type.IsArray && IsNumericTypeCode(typeCode))
+            if (!type.IsArray && IsNumeric(typeCode))
             {
                 Write(writer, value, _numberFormatString);
                 return;
@@ -208,7 +220,7 @@ namespace Antix.Serializing
                        : type;
         }
 
-        static bool IsNumericTypeCode(TypeCode typeCode)
+        static bool IsNumeric(TypeCode typeCode)
         {
             switch (typeCode)
             {
@@ -227,6 +239,17 @@ namespace Antix.Serializing
                 default:
                     return false;
             }
+        }
+
+        static bool IsAnonymous(Type type)
+        {
+            if (type == null)
+                throw new ArgumentNullException("type");
+
+            return Attribute.IsDefined(type, typeof(CompilerGeneratedAttribute), false)
+                && type.IsGenericType && type.Name.Contains("AnonymousType")
+                && (type.Name.StartsWith("<>") || type.Name.StartsWith("VB$"))
+                && (type.Attributes & TypeAttributes.NotPublic) == TypeAttributes.NotPublic;
         }
 
         static string Head(string value, string cut)

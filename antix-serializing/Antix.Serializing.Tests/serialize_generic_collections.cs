@@ -41,7 +41,6 @@ namespace Antix.Serializing.Tests
             Assert.Equal("Name", xml.XPathSelectElement("/HasGenericCollections/ValueDictionary/KeyValuePair/Value").Value);
         }
 
-
         [Fact]
         public void deserialize_generic_list()
         {
