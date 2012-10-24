@@ -1,9 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Runtime.Serialization;
+﻿using System.IO;
 using System.Threading;
 using Antix.Serializing.IO;
-using Antix.Serializing.Properties;
 
 namespace Antix.Serializing
 {
@@ -35,38 +32,6 @@ namespace Antix.Serializing
 
                 return serializer.Encoding.GetString(stream.ToArray());
             }
-        }
-    }
-
-    [Serializable]
-    public class SerializerException : Exception
-    {
-        public SerializerException(string message)
-            : base(message)
-        {
-        }
-
-        protected SerializerException(
-            SerializationInfo info,
-            StreamingContext context)
-            : base(info, context)
-        {
-        }
-    }
-
-    [Serializable]
-    public class AnonymousTypeSerializerException : SerializerException
-    {
-        public AnonymousTypeSerializerException()
-            : base(Resources.AnonymousTypeSerializerException_message)
-        {
-        }
-
-        protected AnonymousTypeSerializerException(
-            SerializationInfo info,
-            StreamingContext context)
-            : base(info, context)
-        {
         }
     }
 }

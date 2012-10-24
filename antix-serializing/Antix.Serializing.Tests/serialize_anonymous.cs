@@ -42,7 +42,6 @@ namespace Antix.Serializing.Tests
             Assert.Equal("Hello", xml.XPathSelectElement("/Object/AProperty").Value);
         }
 
-
         [Fact]
         public void does_not_throw_as_sub_object()
         {

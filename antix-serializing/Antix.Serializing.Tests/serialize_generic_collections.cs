@@ -23,14 +23,14 @@ namespace Antix.Serializing.Tests
                 new HasGenericCollections
                     {
                         ValueDictionary = new Dictionary<string, Simple>
-                                    {
-                                        {
-                                            "One", new Simple
-                                                       {
-                                                           Name = "Name"
-                                                       }
-                                        }
-                                    }
+                                              {
+                                                  {
+                                                      "One", new Simple
+                                                                 {
+                                                                     Name = "Name"
+                                                                 }
+                                                  }
+                                              }
                     }
                 );
 
@@ -38,7 +38,8 @@ namespace Antix.Serializing.Tests
 
             var xml = XDocument.Parse(result);
             Assert.Equal("One", xml.XPathSelectElement("/HasGenericCollections/ValueDictionary/KeyValuePair/Key").Value);
-            Assert.Equal("Name", xml.XPathSelectElement("/HasGenericCollections/ValueDictionary/KeyValuePair/Value").Value);
+            Assert.Equal("Name",
+                         xml.XPathSelectElement("/HasGenericCollections/ValueDictionary/KeyValuePair/Value").Value);
         }
 
         [Fact]
@@ -50,14 +51,15 @@ namespace Antix.Serializing.Tests
                 new HasGenericCollections
                     {
                         ValueList = new List<Simple>
-                                    (
-                                        new []{
-                                            new Simple
-                                                       {
-                                                           Name = "Name"
-                                                       }
+                            (
+                            new[]
+                                {
+                                    new Simple
+                                        {
+                                            Name = "Name"
                                         }
-                                    )
+                                }
+                            )
                     }
                 );
 

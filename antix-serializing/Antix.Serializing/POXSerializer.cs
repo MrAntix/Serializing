@@ -85,10 +85,10 @@ namespace Antix.Serializing
 
             var type = GetNonNullableType(value.GetType());
 
-            if(string.IsNullOrWhiteSpace(name)
+            if (string.IsNullOrWhiteSpace(name)
                 && IsAnonymous(type))
             {
-                
+                throw new AnonymousTypeSerializerException();
             }
 
             Serialize(writer, value, type, name ?? Head(type.Name, "`"));
@@ -246,10 +246,10 @@ namespace Antix.Serializing
             if (type == null)
                 throw new ArgumentNullException("type");
 
-            return Attribute.IsDefined(type, typeof(CompilerGeneratedAttribute), false)
-                && type.IsGenericType && type.Name.Contains("AnonymousType")
-                && (type.Name.StartsWith("<>") || type.Name.StartsWith("VB$"))
-                && (type.Attributes & TypeAttributes.NotPublic) == TypeAttributes.NotPublic;
+            return Attribute.IsDefined(type, typeof (CompilerGeneratedAttribute), false)
+                   && type.IsGenericType && type.Name.Contains("AnonymousType")
+                   && (type.Name.StartsWith("<>") || type.Name.StartsWith("VB$"))
+                   && (type.Attributes & TypeAttributes.NotPublic) == TypeAttributes.NotPublic;
         }
 
         static string Head(string value, string cut)

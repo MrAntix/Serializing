@@ -38,12 +38,14 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnonymousTypeSerializerException.cs" />
     <Compile Include="IO\FormattingWriter.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SerializerException.cs" />
     <Compile Include="SerializerExtensions.cs" />
     <Compile Include="ISerializer.cs" />
     <Compile Include="ISerializerBuilder.cs" />
