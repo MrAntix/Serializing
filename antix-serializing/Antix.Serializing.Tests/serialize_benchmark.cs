@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Antix.Serializing.Tests.Models;
-using Testing;
+using Antix.Testing;
 using Xunit;
 
 namespace Antix.Serializing.Tests
@@ -21,7 +21,7 @@ namespace Antix.Serializing.Tests
 
             var obj = new Simple();
 
-            Run("simple", () => sut.Serialize(obj), 1000, 10000, 100000);
+            Run("simple_object", () => sut.Serialize(obj), 1000, 10000, 100000);
         }
 
         [Fact]
@@ -32,7 +32,7 @@ namespace Antix.Serializing.Tests
 
             var obj = new Builder<Simple>().Build(10);
 
-            Run("simple", () => sut.Serialize(obj), 1000, 10000);
+            Run("simple_collection", () => sut.Serialize(obj), 1000, 10000);
         }
 
         [Fact]
@@ -43,29 +43,22 @@ namespace Antix.Serializing.Tests
 
             var obj = new Builder<Simple>().Build(100);
 
-            Run("simple", () => sut.Serialize(obj), 1000, 10000);
+            Run("simple_collection_large", () => sut.Serialize(obj), 1000, 10000);
         }
 
         static void Run(
-            int iterations, string notes, Action action)
+            string notes, Action action,
+            params int[] iterations)
         {
-            var time = Benchmark.Run(iterations, action);
-            Console.WriteLine(
-                "{0}: {1} {2}x {3}",
-                time,
-                TimeSpan.FromTicks(time.Ticks/iterations),
-                iterations,
-                notes);
-        }
-
-        static void Run(
-            string notes, Action action, int iterations,
-            params int[] moreIterations)
-        {
-            foreach (var i in new[] {iterations}.Union(moreIterations))
+            Console.WriteLine(notes);
+            var results = Benchmark.Run(action, iterations);
+            foreach (var result in results.Results)
             {
-                Run(i, notes, action);
+                Console.WriteLine(result);
             }
+            Console.WriteLine("totals");
+            Console.WriteLine(results);
+            Console.WriteLine("---   ---   ---   ---   ---   ---   ---   ---");
         }
     }
 }
