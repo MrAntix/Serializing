@@ -7,7 +7,7 @@ using Xunit;
 namespace Antix.Serializing.Tests.XUnitExtensions
 {
     /// <summary>
-    ///   <see cref="https://github.com/AutoFixture/AutoFixture/blob/master/Src/AutoFixtureUnitTest/UseCultureAttribute.cs" />
+    ///     <see cref="https://github.com/AutoFixture/AutoFixture/blob/master/Src/AutoFixtureUnitTest/UseCultureAttribute.cs" />
     /// </summary>
     public class UseCultureAttribute : BeforeAfterTestAttribute
     {

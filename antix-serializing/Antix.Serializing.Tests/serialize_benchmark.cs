@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Antix.Serializing.Tests.Models;
 using Antix.Testing;
 using Xunit;

@@ -32,8 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Antix.Testing">
-      <HintPath>..\packages\antix-testing.3.0.0-b01\lib\net40\Antix.Testing.dll</HintPath>
+    <Reference Include="Antix.Testing, Version=3.0.0.40713, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\antix-testing.3.0.0-b02\lib\net40\Antix.Testing.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

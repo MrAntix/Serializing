@@ -26,22 +26,22 @@ namespace Antix.Serializing
         public bool IncludeNulls { get; set; }
 
         /// <summary>
-        ///   <see cref="http://msdn.microsoft.com/en-us/library/az4se3k1.aspx" />
+        ///     <see cref="http://msdn.microsoft.com/en-us/library/az4se3k1.aspx" />
         /// </summary>
         public string DateTimeFormatString { get; set; }
 
         /// <summary>
-        ///   <see cref="http://msdn.microsoft.com/en-us/library/ee372286.aspx" />
+        ///     <see cref="http://msdn.microsoft.com/en-us/library/ee372286.aspx" />
         /// </summary>
         public string TimeSpanFormatString { get; set; }
 
         /// <summary>
-        ///   <see cref="http://msdn.microsoft.com/en-us/library/c3s1ez6e.aspx" />
+        ///     <see cref="http://msdn.microsoft.com/en-us/library/c3s1ez6e.aspx" />
         /// </summary>
         public string EnumFormatString { get; set; }
 
         /// <summary>
-        ///   <see cref="http://msdn.microsoft.com/en-us/library/dwhawy9k.aspx" />
+        ///     <see cref="http://msdn.microsoft.com/en-us/library/dwhawy9k.aspx" />
         /// </summary>
         public string NumberFormatString { get; set; }
     }
