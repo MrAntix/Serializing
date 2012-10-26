@@ -1,6 +1,7 @@
 using System;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Antix.Serializing.Tests.Models;
 using Xunit;
 
 namespace Antix.Serializing.Tests
@@ -48,10 +49,26 @@ namespace Antix.Serializing.Tests
             var sut = GetBuilder()
                 .Create();
 
-            var result = sut.Serialize(new
+            var result = sut.Serialize(new HasObject
                                            {
-                                               AProperty = new {ASubObjectProperty = "Hello"}
-                                           }, "Object");
+                                               Value = new {ASubObjectProperty = "Hello"}
+                                           });
+            Console.WriteLine(result);
+
+            var xml = XDocument.Parse(result);
+            Assert.Equal("Hello", xml.XPathSelectElement("/HasObject/Value/ASubObjectProperty").Value);
+        }
+
+        [Fact]
+        public void does_not_throw_as_sub_object_of_anonymous()
+        {
+            var sut = GetBuilder()
+                .Create();
+
+            var result = sut.Serialize(new
+            {
+                AProperty = new { ASubObjectProperty = "Hello" }
+            }, "Object");
             Console.WriteLine(result);
 
             var xml = XDocument.Parse(result);

@@ -50,6 +50,7 @@
     <Compile Include="Models\HasGenericCollections.cs" />
     <Compile Include="Models\HasEnum.cs" />
     <Compile Include="Models\HasNumber.cs" />
+    <Compile Include="Models\HasObject.cs" />
     <Compile Include="Models\HasTimeSpan.cs" />
     <Compile Include="serialize_anonymous.cs" />
     <Compile Include="serialize_benchmark.cs" />
