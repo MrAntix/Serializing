@@ -29,6 +29,20 @@ namespace Antix.Serializing.Tests
         }
 
         [Fact]
+        public void simple_attributes()
+        {
+            const string xml = "<Simple Name=\"Name\"/>";
+            Console.Write(xml);
+
+            var sut = GetBuilder().Build();
+
+            var actual = sut.Deserialize<Simple>(xml);
+
+            Assert.NotNull(actual);
+            Assert.Equal("Name", actual.Name);
+        }
+
+        [Fact]
         public void nested()
         {
             const string xml = "<SimpleNested><Name>Name</Name><Simple><Name>Nested Name</Name></Simple></SimpleNested>";

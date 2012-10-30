@@ -53,13 +53,27 @@ namespace Antix.Serializing
         static object Read(XmlReader reader, Type type)
         {
             var obj = Activator.CreateInstance(type);
+
+            if (reader.HasAttributes)
+            {
+                reader.MoveToFirstAttribute();
+                do
+                {
+                    var propertyInfo = type.GetProperty(reader.Name);
+                    propertyInfo
+                        .SetValue(
+                            obj,
+                            Convert.ChangeType(reader.Value, propertyInfo.PropertyType)
+                        );
+                } while (reader.MoveToNextAttribute());
+            }
+
             while (reader.Read())
             {
-                var propertyInfo = type.GetProperty(reader.Name);
-
                 switch (reader.NodeType)
                 {
                     case XmlNodeType.Element:
+                        var propertyInfo = type.GetProperty(reader.Name);
                         propertyInfo
                             .SetValue(
                                 obj,
