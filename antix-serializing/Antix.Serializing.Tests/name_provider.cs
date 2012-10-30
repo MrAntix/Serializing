@@ -14,7 +14,7 @@ namespace Antix.Serializing.Tests
         {
             var names = new Dictionary<MemberInfo, string>();
 
-            var sut = new NameProvider(names);
+            var sut = new NameProvider(names, "Anon");
             var type = typeof (Simple);
 
             Assert.Equal(type.Name, sut.Get(type));
@@ -25,7 +25,7 @@ namespace Antix.Serializing.Tests
         {
             var names = new Dictionary<MemberInfo, string>();
 
-            var sut = new NameProvider(names);
+            var sut = new NameProvider(names, "Anon");
             var propertyInfo = typeof (Simple).GetProperties().First();
 
             Assert.Equal(propertyInfo.Name, sut.Get(propertyInfo));
@@ -40,7 +40,7 @@ namespace Antix.Serializing.Tests
                                 {typeof (Simple), expectedName}
                             };
 
-            var sut = new NameProvider(names);
+            var sut = new NameProvider(names, "Anon");
 
             Assert.Equal(expectedName, sut.Get(typeof (Simple)));
         }
@@ -54,7 +54,7 @@ namespace Antix.Serializing.Tests
                                 {typeof (Simple).GetProperties().First(), expectedName}
                             };
 
-            var sut = new NameProvider(names);
+            var sut = new NameProvider(names, "Anon");
 
             Assert.Equal(expectedName, sut.Get(typeof (Simple).GetProperties().First()));
         }

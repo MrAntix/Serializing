@@ -16,21 +16,7 @@ namespace Antix.Serializing.Tests
         }
 
         [Fact]
-        public void throws_when_name_not_supplied()
-        {
-            var sut = GetBuilder()
-                .Build();
-
-            Assert.Throws<AnonymousTypeSerializerException>(
-                () => sut.Serialize(new
-                                        {
-                                            AProperty = "Hello"
-                                        })
-                );
-        }
-
-        [Fact]
-        public void does_not_throw_when_name_supplied()
+        public void uses_default_name_for_anonymous()
         {
             var sut = GetBuilder()
                 .Build();
@@ -42,19 +28,20 @@ namespace Antix.Serializing.Tests
             Console.WriteLine(result);
 
             var xml = XDocument.Parse(result);
-            Assert.Equal("Hello", xml.XPathSelectElement("/Object/AProperty").Value);
+            Assert.Equal("Hello", xml.XPathSelectElement("/Anon/AProperty").Value);
         }
 
         [Fact]
-        public void does_not_throw_as_sub_object()
+        public void uses_default_name_for_anonymous_as_sub_object()
         {
             var sut = GetBuilder()
                 .Build();
 
-            var result = sut.Serialize(new HasObject
-                                           {
-                                               Value = new {ASubObjectProperty = "Hello"}
-                                           });
+            var result = sut.Serialize(
+                new HasObject
+                    {
+                        Value = new {ASubObjectProperty = "Hello"}
+                    });
             Console.WriteLine(result);
 
             var xml = XDocument.Parse(result);
@@ -62,41 +49,37 @@ namespace Antix.Serializing.Tests
         }
 
         [Fact]
-        public void does_not_throw_as_sub_object_array()
+        public void uses_default_name_for_anonymous_as_sub_object_array()
         {
             var sut = GetBuilder()
-                .Type<HasObject>(
-                    c => c.Name("Object")
-                          .Property(o => o.ValueArray,
-                                    pc => pc.Name("Barry")
-                                            .Formatter(v => "Paul")))
-                .Type<Object>(c => { })
                 .Build();
 
-            var result = sut.Serialize(new HasObject
-                                           {
-                                               ValueArray = new object[] {new {ASubObjectProperty = "Hello"}}
-                                           });
+            var result = sut.Serialize(
+                new HasObject
+                {
+                    ValueArray = new object[] { new { ASubObjectProperty = "Hello" } }
+                });
             Console.WriteLine(result);
 
             var xml = XDocument.Parse(result);
-            Assert.Equal("Hello", xml.XPathSelectElement("/HasObject/Value/ASubObjectProperty").Value);
+            Assert.Equal("Hello", xml.XPathSelectElement("/HasObject/ValueArray/Anon/ASubObjectProperty").Value);
         }
 
         [Fact]
-        public void does_not_throw_as_sub_object_of_anonymous()
+        public void uses_property_name_as_sub_object_of_anonymous()
         {
             var sut = GetBuilder()
                 .Build();
 
-            var result = sut.Serialize(new
-                                           {
-                                               AProperty = new {ASubObjectProperty = "Hello"}
-                                           });
+            var result = sut.Serialize(
+                new
+                    {
+                        AProperty = new {ASubObjectProperty = "Hello"}
+                    });
             Console.WriteLine(result);
 
             var xml = XDocument.Parse(result);
-            Assert.Equal("Hello", xml.XPathSelectElement("/Object/AProperty/ASubObjectProperty").Value);
+            Assert.Equal("Hello", xml.XPathSelectElement("/Anon/AProperty/ASubObjectProperty").Value);
         }
     }
 }

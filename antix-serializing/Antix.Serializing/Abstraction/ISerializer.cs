@@ -1,16 +1,17 @@
 using System;
 using System.IO;
-using System.Text;
 
 namespace Antix.Serializing.Abstraction
 {
     public interface ISerializer
     {
-        Encoding Encoding { get; }
-        IFormatProvider FormatProvider { get; }
+        /// <summary>
+        /// <para>Serializer Settings</para>
+        /// </summary>
+        SerializerSettings Settings { get; }
 
-        bool IncludeNulls { get; }
+        void Serialize(TextWriter writer, object value, string name);
 
-        void Serialize(TextWriter writer, object value);
+        object Deserialize(Stream input, Type type);
     }
 }

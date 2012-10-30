@@ -1,30 +1,49 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Reflection;
 
 namespace Antix.Serializing.Providers
 {
-    public class NameProvider
+    public class NameProvider : TypeKeyedCache<string>
     {
-        readonly IReadOnlyDictionary<MemberInfo, string> _names;
-
-        public NameProvider(IEnumerable<Tuple<MemberInfo, string>> names) :
-            this(names.ToDictionary(t => t.Item1, t => t.Item2))
+        readonly string _anonymousTypeName;
+        public NameProvider(
+            IEnumerable<Tuple<MemberInfo, string>> names, 
+            string anonymousTypeName) :
+            base(names)
         {
+            _anonymousTypeName = anonymousTypeName;
         }
 
-        public NameProvider(IDictionary<MemberInfo, string> names)
+        public NameProvider(
+            IDictionary<MemberInfo, string> names,
+            string anonymousTypeName) :
+            base(names)
         {
-            _names = new ReadOnlyDictionary<MemberInfo, string>(names);
+            _anonymousTypeName = anonymousTypeName;
         }
 
-        public string Get(MemberInfo type)
+        public string Get(MemberInfo memberInfo)
         {
-            return _names.ContainsKey(type)
-                       ? _names[type]
-                       : type.Name.Head("`");
+            string name;
+            if (!TryGet(memberInfo, out name))
+            {
+                var type = memberInfo as Type;
+                if (type!=null && type.IsAnonymous())
+                    return _anonymousTypeName;
+
+                name = memberInfo.Name.Head("`");
+            }
+
+            return name;
+        }
+
+        public string TryGet(MemberInfo memberInfo)
+        {
+            string name;
+            TryGet(memberInfo, out name);
+
+            return name;
         }
     }
 }

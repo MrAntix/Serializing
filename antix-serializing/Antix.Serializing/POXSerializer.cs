@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
+using System.Xml;
 using Antix.Serializing.Abstraction;
 using Antix.Serializing.Providers;
 
@@ -15,115 +12,144 @@ namespace Antix.Serializing
         ISerializer
     {
         readonly NameProvider _nameProvider;
-        readonly ValueProvider _valueProvider;
+        readonly NameProvider _itemNameProvider;
+        readonly FormatterProvider _formatterProvider;
+        readonly SerializerSettings _settings;
 
         internal POXSerializer(
             NameProvider nameProvider,
-            ValueProvider valueProvider,
-            ISerializerSettings settings)
+            NameProvider itemNameProvider,
+            FormatterProvider formatterProvider,
+            SerializerSettings settings)
         {
             _nameProvider = nameProvider;
-            _valueProvider = valueProvider;
-
-            _formatProvider = settings.FormatProvider;
-            _encoding = settings.Encoding;
-            _includeNulls = settings.IncludeNulls;
-            _dateTimeFormatString = settings.DateTimeFormatString;
-            _timeSpanFormatString = settings.TimeSpanFormatString;
-            _enumFormatString = settings.EnumFormatString;
-            _numberFormatString = settings.NumberFormatString;
+            _itemNameProvider = itemNameProvider;
+            _formatterProvider = formatterProvider;
+            _settings = settings;
         }
 
-        readonly Encoding _encoding;
-        readonly IFormatProvider _formatProvider;
-
-        readonly bool _includeNulls;
-        readonly string _dateTimeFormatString;
-        readonly string _numberFormatString;
-        readonly string _timeSpanFormatString;
-        readonly string _enumFormatString;
-
-        public Encoding Encoding
+        public SerializerSettings Settings
         {
-            get { return _encoding; }
+            get { return _settings; }
         }
 
-        public IFormatProvider FormatProvider
+        public object Deserialize(Stream input, Type type)
         {
-            get { return _formatProvider; }
+            using (var reader = XmlReader.Create(input))
+            {
+                while (reader.Read())
+                {
+                    switch (reader.NodeType)
+                    {
+                        case XmlNodeType.Element:
+                            return Read(reader, type);
+                    }
+                }
+            }
+
+            return null;
         }
 
-        public bool IncludeNulls
+        static object Read(XmlReader reader, Type type)
         {
-            get { return _includeNulls; }
+            var obj = Activator.CreateInstance(type);
+            while (reader.Read())
+            {
+                var propertyInfo = type.GetProperty(reader.Name);
+
+                switch (reader.NodeType)
+                {
+                    case XmlNodeType.Element:
+                        propertyInfo
+                            .SetValue(
+                                obj,
+                                ReadValue(reader, propertyInfo.PropertyType)
+                            );
+                        break;
+                }
+            }
+
+            return obj;
         }
 
-        public string DateTimeFormatString
+        static object ReadValue(XmlReader reader)
         {
-            get { return _dateTimeFormatString; }
+            var typeCode = Type.GetTypeCode(propertyInfo.PropertyType);
+            if (typeCode == TypeCode.Object)
+            {
+                propertyInfo
+                    .SetValue(
+                        obj,
+                        Read(reader, propertyInfo.PropertyType)
+                    );
+            }
+            else
+            {
+                reader.Read();
+                propertyInfo
+                    .SetValue(
+                        obj,
+                        Convert.ChangeType(reader.Value, propertyInfo.PropertyType)
+                    );
+            }
+
         }
 
-        public string TimeSpanFormatString
-        {
-            get { return _timeSpanFormatString; }
-        }
+        #region serialize
 
-        public string EnumFormatString
-        {
-            get { return _enumFormatString; }
-        }
-
-        public string NumberFormatString
-        {
-            get { return _numberFormatString; }
-        }
-
-        public void Serialize(TextWriter writer, object value)
+        public void Serialize(
+            TextWriter writer, object value, string name)
         {
             if (value == null) return;
 
             var type = value.GetType();
 
-            WriteTag(writer, value, type);
+            WriteTag(writer, value, type, name);
         }
 
-        void WriteTag(TextWriter writer, object value, MemberInfo memberInfo)
+        void WriteTag(
+            TextWriter writer, object value,
+            MemberInfo memberInfo, string name)
         {
-            var name = _nameProvider.Get(memberInfo);
-            value = _valueProvider.Get(memberInfo, value);
+            if (name == null)
+                name = _nameProvider.Get(memberInfo);
+
+            value = _formatterProvider.Get(memberInfo, value);
 
             if (value == null)
             {
-                if (_includeNulls)
+                if (Settings.IncludeNulls)
                     writer.Write("<{0} nill=\"true\"/>", name);
             }
             else
             {
                 writer.Write("<{0}>", name);
-                WriteTagContent(writer, value, value.GetType());
+                WriteTagContent(writer, value, memberInfo);
                 writer.Write("</{0}>", name);
             }
         }
 
-        void WriteTagContent(TextWriter writer, object value, Type type)
+        void WriteTagContent(TextWriter writer, object value, MemberInfo memberInfo)
         {
+            var type = value.GetType(); // value is never null see WriteTag
+
             var notNullableType = type.GetNonNullableType();
-            if (notNullableType == typeof(DateTime)
-                || notNullableType == typeof(DateTimeOffset))
+            if (notNullableType == typeof (DateTime)
+                || notNullableType == typeof (DateTimeOffset))
             {
-                WriteValue(writer, value, _dateTimeFormatString);
+                WriteValue(writer, value, Settings.DateTimeFormatString);
                 return;
             }
 
-            if (notNullableType == typeof(TimeSpan))
+            if (notNullableType == typeof (TimeSpan))
             {
-                WriteValue(writer, value, _timeSpanFormatString);
+                WriteValue(writer, value, Settings.TimeSpanFormatString);
                 return;
             }
 
             if (notNullableType.IsEnum)
             {
-                WriteValue(writer, value, _enumFormatString);
+                WriteValue(writer, value, Settings.EnumFormatString);
                 return;
             }
 
@@ -131,7 +157,7 @@ namespace Antix.Serializing
 
             if (!type.IsArray && typeCode.IsNumeric())
             {
-                WriteValue(writer, value, _numberFormatString);
+                WriteValue(writer, value, Settings.NumberFormatString);
                 return;
             }
 
@@ -140,7 +166,9 @@ namespace Antix.Serializing
                 case TypeCode.Object:
                     if (type.IsEnumerable())
                     {
-                        WriteObjects(writer, value as IEnumerable);
+                        WriteObjects(
+                            writer, value as IEnumerable,
+                            _itemNameProvider.TryGet(memberInfo));
                     }
                     else
                     {
@@ -153,11 +181,11 @@ namespace Antix.Serializing
             }
         }
 
-        void WriteObjects(TextWriter writer, IEnumerable values)
+        void WriteObjects(TextWriter writer, IEnumerable values, string name)
         {
             foreach (var value in values)
             {
-                Serialize(writer, value);
+                Serialize(writer, value, name);
             }
         }
 
@@ -168,7 +196,7 @@ namespace Antix.Serializing
             {
                 var propertyValue = property.GetValue(value, new object[] {});
 
-                WriteTag(writer, propertyValue, property);
+                WriteTag(writer, propertyValue, property, null);
             }
         }
 
@@ -186,5 +214,7 @@ namespace Antix.Serializing
                     );
             }
         }
+
+        #endregion
     }
 }

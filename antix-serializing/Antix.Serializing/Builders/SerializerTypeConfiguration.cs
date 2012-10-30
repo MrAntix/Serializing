@@ -35,6 +35,7 @@ namespace Antix.Serializing.Builders
 
             return this;
         }
+       
 
         IEnumerable<ISerializerConfiguration> ISerializerTypeConfiguration.Properties
         {

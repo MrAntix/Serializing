@@ -15,6 +15,7 @@ namespace Antix.Serializing.Builders
 
         protected readonly MemberInfo MemberInfo;
         string _name;
+        string _itemName;
         Func<object, string> _formatter;
 
         MemberInfo ISerializerConfiguration.MemberInfo
@@ -27,6 +28,11 @@ namespace Antix.Serializing.Builders
             get { return _name; }
         }
 
+        string ISerializerConfiguration.ItemName
+        {
+            get { return _itemName; }
+        }
+
         Func<object, string> ISerializerConfiguration.Formatter
         {
             get { return _formatter; }
@@ -37,6 +43,14 @@ namespace Antix.Serializing.Builders
             string value)
         {
             _name = value;
+
+            return this as TBuilder;
+        }
+
+        public TBuilder ItemName(
+            string value)
+        {
+            _itemName = value;
 
             return this as TBuilder;
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using Antix.Serializing.Abstraction;
 using Antix.Serializing.Abstraction.Builders;
 using Antix.Serializing.Providers;
@@ -12,12 +13,12 @@ namespace Antix.Serializing.Builders
     public class SerializerBuilder :
         ISerializerBuilder
     {
-        readonly ISerializerSettings _settings;
+        readonly SerializerBuilderSettings _settings;
         readonly IDictionary<Type, ISerializerTypeConfiguration> _typeConfiguration;
 
         public SerializerBuilder()
         {
-            _settings = new SerializerSettings();
+            _settings = new SerializerBuilderSettings();
             _typeConfiguration = new Dictionary<Type, ISerializerTypeConfiguration>();
         }
 
@@ -37,7 +38,7 @@ namespace Antix.Serializing.Builders
             MemberInfo memberInfo,
             Func<object, string> format)
         {
-            var type = (Type)memberInfo;
+            var type = (Type) memberInfo;
 
             var typeConfiguration = GetOrAddTypeConfiguration(
                 type,
@@ -70,18 +71,37 @@ namespace Antix.Serializing.Builders
             return typeConfiguration;
         }
 
-        public POXSerializer Build()
+        public ISerializer Build()
         {
             var names = BuildNames();
-            var nameProvider = new NameProvider(names);
+            var nameProvider = new NameProvider(names, _settings.AnonymousTypeName);
+
+            var itemNames = BuildItemNames();
+            var itemNameProvider = new NameProvider(itemNames, _settings.AnonymousTypeName);
 
             var formatters = BuildFormatters();
-            var valueProvider = new ValueProvider(formatters);
+            var valueProvider = new FormatterProvider(formatters);
+
+            var settings = BuildSettings();
 
             return new POXSerializer(
                 nameProvider,
+                itemNameProvider,
                 valueProvider,
-                _settings);
+                settings);
+        }
+
+        SerializerSettings BuildSettings()
+        {
+            return new SerializerSettings(
+                _settings.Encoding,
+                _settings.Culture,
+                _settings.IncludeNulls,
+                _settings.DateTimeFormatString,
+                _settings.TimeSpanFormatString,
+                _settings.EnumFormatString,
+                _settings.NumberFormatString,
+                _settings.AnonymousTypeName);
         }
 
         IEnumerable<Tuple<MemberInfo, Func<object, string>>> BuildFormatters()
@@ -107,6 +127,19 @@ namespace Antix.Serializing.Builders
                 foreach (var propertyConfiguration in typeConfiguration.Properties
                                                                        .Where(c => c.Name != null))
                     yield return Tuple.Create(propertyConfiguration.MemberInfo, propertyConfiguration.Name);
+            }
+        }
+
+        IEnumerable<Tuple<MemberInfo, string>> BuildItemNames()
+        {
+            foreach (var typeConfiguration in _typeConfiguration.Values)
+            {
+                if (typeConfiguration.ItemName != null)
+                    yield return Tuple.Create(typeConfiguration.MemberInfo, typeConfiguration.ItemName);
+
+                foreach (var propertyConfiguration in typeConfiguration.Properties
+                                                                       .Where(c => c.ItemName != null))
+                    yield return Tuple.Create(propertyConfiguration.MemberInfo, propertyConfiguration.ItemName);
             }
         }
 
@@ -166,21 +199,28 @@ namespace Antix.Serializing.Builders
 
         public ISerializerBuilder UseThreadCulture()
         {
-            _settings.FormatProvider = null;
+            _settings.Culture = null;
             return this;
         }
 
-        public ISerializerBuilder UseCulture(string cultureName)
+        public ISerializerBuilder UseCulture(CultureInfo culture)
         {
-            _settings.FormatProvider = CultureInfo.GetCultureInfo(cultureName);
+            _settings.Culture = culture;
             _settings.DateTimeFormatString = "g";
             return this;
         }
 
         public ISerializerBuilder IgnoreCulture()
         {
-            _settings.FormatProvider = CultureInfo.InvariantCulture;
+            _settings.Culture = CultureInfo.InvariantCulture;
             _settings.DateTimeFormatString = "s";
+            return this;
+        }
+
+        public ISerializerBuilder UseEncoding(Encoding encoding)
+        {
+            _settings.Encoding = encoding;
+
             return this;
         }
     }

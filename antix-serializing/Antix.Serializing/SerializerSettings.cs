@@ -1,49 +1,77 @@
-using System;
 using System.Globalization;
 using System.Text;
-using Antix.Serializing.Abstraction;
 
 namespace Antix.Serializing
 {
-    public class SerializerSettings :
-        ISerializerSettings
+    public class SerializerSettings
     {
-        public SerializerSettings()
-        {
-            Encoding = Encoding.Default;
-            FormatProvider = CultureInfo.InvariantCulture;
+        readonly Encoding _encoding;
+        readonly CultureInfo _culture;
 
-            IncludeNulls = false;
-            DateTimeFormatString = "s";
-            TimeSpanFormatString = "c";
-            NumberFormatString = "g";
-            EnumFormatString = "g";
+        readonly bool _includeNulls;
+
+        readonly string _dateTimeFormatString;
+        readonly string _timeSpanFormatString;
+        readonly string _enumFormatString;
+        readonly string _numberFormatString;
+
+        readonly string _anonymousTypeName;
+
+        public SerializerSettings(
+            Encoding encoding, CultureInfo culture,
+            bool includeNulls,
+            string dateTimeFormatString, string timeSpanFormatString,
+            string enumFormatString, string numberFormatString,
+            string anonymousTypeName)
+        {
+            _encoding = encoding;
+            _culture = culture;
+            _includeNulls = includeNulls;
+            _dateTimeFormatString = dateTimeFormatString;
+            _timeSpanFormatString = timeSpanFormatString;
+            _enumFormatString = enumFormatString;
+            _numberFormatString = numberFormatString;
+            _anonymousTypeName = anonymousTypeName;
         }
 
-        public Encoding Encoding { get; set; }
+        public Encoding Encoding
+        {
+            get { return _encoding; }
+        }
 
-        public IFormatProvider FormatProvider { get; set; }
+        public CultureInfo Culture
+        {
+            get { return _culture; }
+        }
 
-        public bool IncludeNulls { get; set; }
+        public bool IncludeNulls
+        {
+            get { return _includeNulls; }
+        }
 
-        /// <summary>
-        ///     <see cref="http://msdn.microsoft.com/en-us/library/az4se3k1.aspx" />
-        /// </summary>
-        public string DateTimeFormatString { get; set; }
+        public string DateTimeFormatString
+        {
+            get { return _dateTimeFormatString; }
+        }
 
-        /// <summary>
-        ///     <see cref="http://msdn.microsoft.com/en-us/library/ee372286.aspx" />
-        /// </summary>
-        public string TimeSpanFormatString { get; set; }
+        public string TimeSpanFormatString
+        {
+            get { return _timeSpanFormatString; }
+        }
 
-        /// <summary>
-        ///     <see cref="http://msdn.microsoft.com/en-us/library/c3s1ez6e.aspx" />
-        /// </summary>
-        public string EnumFormatString { get; set; }
+        public string EnumFormatString
+        {
+            get { return _enumFormatString; }
+        }
 
-        /// <summary>
-        ///     <see cref="http://msdn.microsoft.com/en-us/library/dwhawy9k.aspx" />
-        /// </summary>
-        public string NumberFormatString { get; set; }
+        public string NumberFormatString
+        {
+            get { return _numberFormatString; }
+        }
+
+        public string AnonymousTypeName
+        {
+            get { return _anonymousTypeName; }
+        }
     }
 }

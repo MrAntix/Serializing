@@ -55,10 +55,10 @@ namespace Antix.Serializing.Tests
                 .Build();
 
             var result = sut.Serialize(new HasDate
-            {
-                Value = new DateTime(2000, 12, 13),
-                NullableValue = new DateTime(2000, 12, 13)
-            });
+                                           {
+                                               Value = new DateTime(2000, 12, 13),
+                                               NullableValue = new DateTime(2000, 12, 13)
+                                           });
 
             var xml = XDocument.Parse(result);
             Assert.Equal("13 Dec 2000", xml.XPathSelectElement("/HasDate/Value").Value);
@@ -73,10 +73,10 @@ namespace Antix.Serializing.Tests
                 .Build();
 
             var result = sut.Serialize(new HasDate
-            {
-                Value = new DateTime(2000, 12, 13),
-                NullableValue = new DateTime(2000, 12, 13)
-            });
+                                           {
+                                               Value = new DateTime(2000, 12, 13),
+                                               NullableValue = new DateTime(2000, 12, 13)
+                                           });
 
             var xml = XDocument.Parse(result);
             Assert.Equal("2000-12-13T00:00:00", xml.XPathSelectElement("/HasDate/Value").Value);

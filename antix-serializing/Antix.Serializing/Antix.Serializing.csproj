@@ -36,38 +36,40 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstraction\Builders\ISerializerTypeConfiguration.cs" />
-    <Compile Include="AnonymousTypeSerializerException.cs" />
+    <Compile Include="Builders\SerializerBuilderSettings.cs" />
     <Compile Include="IO\FormattingWriter.cs" />
     <Compile Include="Abstraction\Builders\ISerializerConfiguration.cs" />
-    <Compile Include="Providers\NameProvider.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
+    <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Providers\NameProvider.cs" />
     <Compile Include="Builders\SerializerConfiguration.cs" />
+    <Compile Include="Providers\TypeKeyedCache.cs" />
     <Compile Include="SerializerException.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Abstraction\ISerializer.cs" />
     <Compile Include="Abstraction\Builders\ISerializerBuilder.cs" />
-    <Compile Include="Builders\SerializerBuilderExtensions.cs" />
+    <Compile Include="Abstraction\Builders\Extensions.cs" />
     <Compile Include="Builders\SerializerPropertyConfiguration.cs" />
     <Compile Include="SerializerSettings.cs" />
-    <Compile Include="Abstraction\ISerializerSettings.cs" />
     <Compile Include="POXSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Builders\SerializerBuilder.cs" />
     <Compile Include="Builders\SerializerTypeConfiguration.cs" />
-    <Compile Include="Providers\ValueProvider.cs" />
+    <Compile Include="Providers\FormatterProvider.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

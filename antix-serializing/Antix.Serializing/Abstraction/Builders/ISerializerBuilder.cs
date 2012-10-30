@@ -1,12 +1,14 @@
 using System;
+using System.Globalization;
 using System.Reflection;
+using System.Text;
 using Antix.Serializing.Builders;
 
 namespace Antix.Serializing.Abstraction.Builders
 {
     public interface ISerializerBuilder
     {
-        POXSerializer Build();
+        ISerializer Build();
 
         ISerializerBuilder Format(
             MemberInfo memberInfo,
@@ -19,8 +21,10 @@ namespace Antix.Serializing.Abstraction.Builders
         ISerializerBuilder IncludeNulls();
 
         ISerializerBuilder UseThreadCulture();
-        ISerializerBuilder UseCulture(string cultureName);
+        ISerializerBuilder UseCulture(CultureInfo culture);
         ISerializerBuilder IgnoreCulture();
+
+        ISerializerBuilder UseEncoding(Encoding encoding);
 
         ISerializerBuilder EnumAsNumber();
         ISerializerBuilder EnumAsName();

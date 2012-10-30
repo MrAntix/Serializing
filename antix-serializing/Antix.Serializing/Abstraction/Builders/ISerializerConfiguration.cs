@@ -7,6 +7,7 @@ namespace Antix.Serializing.Abstraction.Builders
     {
         MemberInfo MemberInfo { get; }
         string Name { get; }
+        string ItemName { get; }
         Func<object, string> Formatter { get; set; }
     }
 }
