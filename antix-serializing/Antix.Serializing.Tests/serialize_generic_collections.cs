@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Antix.Serializing.Abstraction.Builders;
+using Antix.Serializing.Builders;
 using Antix.Serializing.Tests.Models;
 using Xunit;
 
@@ -17,7 +19,7 @@ namespace Antix.Serializing.Tests
         [Fact]
         public void deserialize_dictionary()
         {
-            var sut = GetBuilder().Create();
+            var sut = GetBuilder().Build();
 
             var result = sut.Serialize(
                 new HasGenericCollections
@@ -45,7 +47,7 @@ namespace Antix.Serializing.Tests
         [Fact]
         public void deserialize_generic_list()
         {
-            var sut = GetBuilder().Create();
+            var sut = GetBuilder().Build();
 
             var result = sut.Serialize(
                 new HasGenericCollections

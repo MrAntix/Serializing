@@ -1,4 +1,6 @@
 ﻿using System;
+using Antix.Serializing.Abstraction.Builders;
+using Antix.Serializing.Builders;
 using Antix.Serializing.Tests.Models;
 using Xunit;
 
@@ -14,7 +16,7 @@ namespace Antix.Serializing.Tests
         [Fact]
         public void simple()
         {
-            var sut = GetBuilder().Create();
+            var sut = GetBuilder().Build();
 
             var result = sut.Serialize(new Simple
                                            {
@@ -29,7 +31,7 @@ namespace Antix.Serializing.Tests
         [Fact]
         public void nested()
         {
-            var sut = GetBuilder().Create();
+            var sut = GetBuilder().Build();
 
             var result = sut.Serialize(new SimpleNested
                                            {
@@ -49,7 +51,7 @@ namespace Antix.Serializing.Tests
         [Fact]
         public void nested_enumerables()
         {
-            var sut = GetBuilder().Create();
+            var sut = GetBuilder().Build();
 
             var result = sut.Serialize(new SimpleNestedEnumerable
                                            {

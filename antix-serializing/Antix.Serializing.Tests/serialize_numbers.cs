@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Antix.Serializing.Abstraction.Builders;
+using Antix.Serializing.Builders;
 using Antix.Serializing.Tests.Models;
 using Xunit;
 
@@ -18,7 +20,7 @@ namespace Antix.Serializing.Tests
         public void standard()
         {
             var sut = GetBuilder()
-                .Create();
+                .Build();
 
             var result = sut.Serialize(new HasNumber());
 
@@ -32,7 +34,7 @@ namespace Antix.Serializing.Tests
         public void nullable_null()
         {
             var sut = GetBuilder()
-                .Create();
+                .Build();
 
             var result = sut.Serialize(new HasNumber
                                            {
@@ -49,7 +51,7 @@ namespace Antix.Serializing.Tests
         public void nullable_not_null()
         {
             var sut = GetBuilder()
-                .Create();
+                .Build();
 
             var result = sut.Serialize(new HasNumber
                                            {
@@ -67,7 +69,7 @@ namespace Antix.Serializing.Tests
         {
             var sut = GetBuilder()
                 .EnumAsNumber()
-                .Create();
+                .Build();
 
             var result = sut.Serialize(new HasNumber());
 
@@ -84,7 +86,7 @@ namespace Antix.Serializing.Tests
         {
             var sut = GetBuilder()
                 .Format<decimal>(v => "Bob")
-                .Create();
+                .Build();
 
             var result = sut.Serialize(new HasNumber
                                            {
@@ -102,8 +104,10 @@ namespace Antix.Serializing.Tests
         public void override_formatting_custom()
         {
             var sut = GetBuilder()
-                .Format((v, t, n) => n == "NullableValue", v => "Bob")
-                .Create();
+                .Type<HasNumber>(
+                    t => t.Property(o => o.NullableValue,
+                                    p => p.Formatter(v => "Bob")))
+                .Build();
 
             var result = sut.Serialize(new HasNumber());
 

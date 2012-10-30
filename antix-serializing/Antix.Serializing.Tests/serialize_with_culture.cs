@@ -1,6 +1,8 @@
 using System;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Antix.Serializing.Abstraction.Builders;
+using Antix.Serializing.Builders;
 using Antix.Serializing.Tests.Models;
 using Antix.Serializing.Tests.XUnitExtensions;
 using Xunit;
@@ -19,7 +21,7 @@ namespace Antix.Serializing.Tests
         public void by_default_current_thread_culture_has_no_effect()
         {
             var sut = GetBuilder()
-                .Create();
+                .Build();
 
             var result = sut.Serialize(new HasNumber
                                            {
@@ -38,7 +40,7 @@ namespace Antix.Serializing.Tests
         {
             var sut = GetBuilder()
                 .UseThreadCulture()
-                .Create();
+                .Build();
 
             var result = sut.Serialize(new HasNumber
                                            {
@@ -56,7 +58,7 @@ namespace Antix.Serializing.Tests
         {
             var sut = GetBuilder()
                 .UseCulture("fr-FR")
-                .Create();
+                .Build();
 
             var result = sut.Serialize(new HasNumber
                                            {

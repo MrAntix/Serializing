@@ -38,23 +38,30 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstraction\Builders\ISerializerTypeConfiguration.cs" />
     <Compile Include="AnonymousTypeSerializerException.cs" />
     <Compile Include="IO\FormattingWriter.cs" />
+    <Compile Include="Abstraction\Builders\ISerializerConfiguration.cs" />
+    <Compile Include="Providers\NameProvider.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Builders\SerializerConfiguration.cs" />
     <Compile Include="SerializerException.cs" />
-    <Compile Include="SerializerExtensions.cs" />
-    <Compile Include="ISerializer.cs" />
-    <Compile Include="ISerializerBuilder.cs" />
-    <Compile Include="SerializerBuilderExtensions.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="Abstraction\ISerializer.cs" />
+    <Compile Include="Abstraction\Builders\ISerializerBuilder.cs" />
+    <Compile Include="Builders\SerializerBuilderExtensions.cs" />
+    <Compile Include="Builders\SerializerPropertyConfiguration.cs" />
     <Compile Include="SerializerSettings.cs" />
-    <Compile Include="ISerializerSettings.cs" />
+    <Compile Include="Abstraction\ISerializerSettings.cs" />
     <Compile Include="POXSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SerializerBuilder.cs" />
+    <Compile Include="Builders\SerializerBuilder.cs" />
+    <Compile Include="Builders\SerializerTypeConfiguration.cs" />
+    <Compile Include="Providers\ValueProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

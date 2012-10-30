@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Antix.Serializing.Abstraction.Builders;
+using Antix.Serializing.Builders;
 using Antix.Serializing.Tests.Models;
 using Xunit;
 
@@ -19,7 +21,7 @@ namespace Antix.Serializing.Tests
         {
             var sut = GetBuilder()
                 .IncludeNulls()
-                .Create();
+                .Build();
 
             var result = sut.Serialize(new Simple
                                            {
@@ -41,7 +43,7 @@ namespace Antix.Serializing.Tests
         {
             var sut = GetBuilder()
                 .ExcludeNulls()
-                .Create();
+                .Build();
 
             var result = sut.Serialize(new Simple
                                            {

@@ -3,6 +3,8 @@ using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Antix.Serializing.Abstraction.Builders;
+using Antix.Serializing.Builders;
 using Antix.Serializing.Tests.Models;
 using Antix.Serializing.Tests.XUnitExtensions;
 using Xunit;
@@ -20,7 +22,7 @@ namespace Antix.Serializing.Tests
         public void standard()
         {
             var sut = GetBuilder()
-                .Create();
+                .Build();
 
             var result = sut.Serialize(new HasDate());
 
@@ -32,7 +34,7 @@ namespace Antix.Serializing.Tests
         public void nullable_null()
         {
             var sut = GetBuilder()
-                .Create();
+                .Build();
 
             var result = sut.Serialize(new HasDate
                                            {
@@ -50,23 +52,43 @@ namespace Antix.Serializing.Tests
         {
             var sut = GetBuilder()
                 .Format<DateTimeOffset>("d MMM yyyy")
-                .Create();
+                .Build();
 
             var result = sut.Serialize(new HasDate
-                                           {
-                                               Value = new DateTime(2000, 12, 13)
-                                           });
+            {
+                Value = new DateTime(2000, 12, 13),
+                NullableValue = new DateTime(2000, 12, 13)
+            });
 
             var xml = XDocument.Parse(result);
             Assert.Equal("13 Dec 2000", xml.XPathSelectElement("/HasDate/Value").Value);
+            Assert.Equal("13 Dec 2000", xml.XPathSelectElement("/HasDate/NullableValue").Value);
         }
 
         [Fact]
-        public void overriding_with_formatter()
+        public void overriding_nullable_only()
+        {
+            var sut = GetBuilder()
+                .Format<DateTimeOffset?>("d MMM yyyy")
+                .Build();
+
+            var result = sut.Serialize(new HasDate
+            {
+                Value = new DateTime(2000, 12, 13),
+                NullableValue = new DateTime(2000, 12, 13)
+            });
+
+            var xml = XDocument.Parse(result);
+            Assert.Equal("2000-12-13T00:00:00", xml.XPathSelectElement("/HasDate/Value").Value);
+            Assert.Equal("13 Dec 2000", xml.XPathSelectElement("/HasDate/NullableValue").Value);
+        }
+
+        [Fact]
+        public void overriding_with_culture_formatter()
         {
             var sut = GetBuilder()
                 .Format<DateTimeOffset>(CultureInfo.GetCultureInfo("en-GB"))
-                .Create();
+                .Build();
 
             var result = sut.Serialize(new HasDate
                                            {
@@ -78,11 +100,11 @@ namespace Antix.Serializing.Tests
         }
 
         [Fact]
-        public void overriding_with_check_and_formatter()
+        public void overriding_with_formatter()
         {
             var sut = GetBuilder()
-                .Format((v, t, n) => true, v => "Hello")
-                .Create();
+                .Format<HasDate>(v => "Hello")
+                .Build();
 
             var result = sut.Serialize(new HasDate
                                            {
@@ -98,7 +120,7 @@ namespace Antix.Serializing.Tests
         {
             var sut = GetBuilder()
                 .DateTimeFormatString(null)
-                .Create();
+                .Build();
 
             var result = sut.Serialize(new HasDate());
 
@@ -112,7 +134,7 @@ namespace Antix.Serializing.Tests
             var sut = GetBuilder()
                 .UseCulture("fr-FR")
                 .DateTimeFormatString("D")
-                .Create();
+                .Build();
 
             var result = sut.Serialize(new HasDate());
 
@@ -126,7 +148,7 @@ namespace Antix.Serializing.Tests
             var sut = GetBuilder()
                 .UseCulture("fr-FR")
                 .IgnoreCulture()
-                .Create();
+                .Build();
 
             var result = sut.Serialize(new HasDate());
 
@@ -139,7 +161,7 @@ namespace Antix.Serializing.Tests
         public void change_thread_culture()
         {
             var sut = GetBuilder()
-                .Create();
+                .Build();
 
             var result = sut.Serialize(new HasDate());
 

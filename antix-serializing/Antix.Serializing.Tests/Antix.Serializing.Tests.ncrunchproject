@@ -16,5 +16,10 @@
   <UseBuildConfiguration></UseBuildConfiguration>
   <ProxyProcessPath></ProxyProcessPath>
   <UseCPUArchitecture>AutoDetect</UseCPUArchitecture>
+  <IgnoredTests>
+    <RegexTestSelector>
+      <RegularExpression>Antix\.Serializing\.Tests\.benchmarks\..*</RegularExpression>
+    </RegexTestSelector>
+  </IgnoredTests>
   <HiddenWarnings>LongTestTimesWithoutParallelExecution</HiddenWarnings>
 </ProjectConfiguration>

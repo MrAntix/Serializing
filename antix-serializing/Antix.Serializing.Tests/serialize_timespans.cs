@@ -3,6 +3,8 @@ using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
+using Antix.Serializing.Abstraction.Builders;
+using Antix.Serializing.Builders;
 using Antix.Serializing.Tests.Models;
 using Xunit;
 
@@ -19,7 +21,7 @@ namespace Antix.Serializing.Tests
         public void standard()
         {
             var sut = GetBuilder()
-                .Create();
+                .Build();
 
             var result = sut.Serialize(new HasTimeSpan());
 
@@ -31,7 +33,7 @@ namespace Antix.Serializing.Tests
         public void nullable_null()
         {
             var sut = GetBuilder()
-                .Create();
+                .Build();
 
             var result = sut.Serialize(new HasTimeSpan
                                            {
@@ -49,7 +51,7 @@ namespace Antix.Serializing.Tests
         {
             var sut = GetBuilder()
                 .Format<TimeSpan>(CultureInfo.GetCultureInfo("en-GB"))
-                .Create();
+                .Build();
 
             var result = sut.Serialize(new HasTimeSpan
                                            {

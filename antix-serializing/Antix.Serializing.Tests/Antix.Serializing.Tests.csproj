@@ -47,13 +47,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Complex.cs" />
+    <Compile Include="Models\ComplexNested.cs" />
     <Compile Include="Models\HasGenericCollections.cs" />
     <Compile Include="Models\HasEnum.cs" />
     <Compile Include="Models\HasNumber.cs" />
     <Compile Include="Models\HasObject.cs" />
     <Compile Include="Models\HasTimeSpan.cs" />
+    <Compile Include="name_provider.cs" />
     <Compile Include="serialize_anonymous.cs" />
-    <Compile Include="serialize_benchmark.cs" />
+    <Compile Include="benchmarks.cs" />
     <Compile Include="serialize_dates.cs" />
     <Compile Include="Models\HasDate.cs" />
     <Compile Include="serialize_generic_collections.cs" />
