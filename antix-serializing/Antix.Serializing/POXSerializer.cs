@@ -72,27 +72,16 @@ namespace Antix.Serializing
             return obj;
         }
 
-        static object ReadValue(XmlReader reader)
+        static object ReadValue(XmlReader reader, Type type)
         {
-            var typeCode = Type.GetTypeCode(propertyInfo.PropertyType);
+            var typeCode = Type.GetTypeCode(type);
             if (typeCode == TypeCode.Object)
             {
-                propertyInfo
-                    .SetValue(
-                        obj,
-                        Read(reader, propertyInfo.PropertyType)
-                    );
-            }
-            else
-            {
-                reader.Read();
-                propertyInfo
-                    .SetValue(
-                        obj,
-                        Convert.ChangeType(reader.Value, propertyInfo.PropertyType)
-                    );
+                return Read(reader, type);
             }
 
+            reader.Read();
+            return Convert.ChangeType(reader.Value, type);
         }
 
         #region serialize

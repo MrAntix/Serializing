@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml;
 using Antix.Serializing.Abstraction.Builders;
 using Antix.Serializing.Builders;
 using Antix.Serializing.Tests.Models;
@@ -42,6 +43,28 @@ namespace Antix.Serializing.Tests
 
             Assert.NotNull(actual.Simple);
             Assert.Equal("Nested Name", actual.Simple.Name);
+        }
+
+        [Fact]
+        public void empty_xml()
+        {
+            const string xml = "";
+            Console.Write(xml);
+
+            var sut = GetBuilder().Build();
+
+            Assert.Throws<XmlException>(()=>sut.Deserialize<Simple>(xml));
+        }
+
+        [Fact]
+        public void badly_formed_xml()
+        {
+            const string xml = "<Simple>Argg";
+            Console.Write(xml);
+
+            var sut = GetBuilder().Build();
+
+            Assert.Throws<XmlException>(() => sut.Deserialize<Simple>(xml));
         }
     }
 }
