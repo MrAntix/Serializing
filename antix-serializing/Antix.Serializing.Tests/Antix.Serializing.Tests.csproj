@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="deserialize.cs" />
+    <Compile Include="deserialize_dates.cs" />
     <Compile Include="Models\Complex.cs" />
     <Compile Include="Models\ComplexNested.cs" />
     <Compile Include="Models\HasGenericCollections.cs" />

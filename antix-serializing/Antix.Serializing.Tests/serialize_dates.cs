@@ -25,6 +25,7 @@ namespace Antix.Serializing.Tests
                 .Build();
 
             var result = sut.Serialize(new HasDate());
+            Console.Write(result);
 
             var xml = XDocument.Parse(result);
             Assert.Equal("0001-01-01T00:00:00", xml.XPathSelectElement("/HasDate/Value").Value);

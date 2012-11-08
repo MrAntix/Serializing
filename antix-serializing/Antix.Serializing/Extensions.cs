@@ -71,10 +71,24 @@ namespace Antix.Serializing
         public static Type GetNonNullableType(this Type type)
         {
             return type.IsGenericType
-                       ? type.GetGenericTypeDefinition() == typeof (Nullable<>)
-                             ? Nullable.GetUnderlyingType(type)
-                             : type
+                   && type.GetGenericTypeDefinition() == typeof (Nullable<>)
+                       ? Nullable.GetUnderlyingType(type)
                        : type;
+        }
+
+        public static bool IsNullable(this Type type)
+        {
+            return type.IsGenericType
+                   && type.GetGenericTypeDefinition() == typeof (Nullable<>)
+                       ? true
+                       : false;
+        }
+
+        public static object GetDefault(this Type type)
+        {
+            return type.IsValueType
+                       ? Activator.CreateInstance(type)
+                       : null;
         }
 
         public static Type GetPropertyTypeOrType(this MemberInfo memberInfo)
